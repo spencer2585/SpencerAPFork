@@ -1,3 +1,5 @@
+import math
+
 import worlds.LauncherComponents as LauncherComponents
 from typing import List
 from BaseClasses import Tutorial
@@ -50,6 +52,19 @@ class dl4World(World):
             quantity = data.max_quantity
             item_pool += [self.create_item(name) for _ in range(quantity)]  # Fixed range(0, quantity) → range(quantity)
 
+       #Create Skill Items
+        chunk = self.options.skill_size.value
+        levels_per_skill = 150
+        num_items = math.ceil(total_locations / chunk)
+
+        for i in range(1, num_items + 1):
+            item_pool.append(self.create_item("Energy Level"))
+            item_pool.append(self.create_item("Running Level"))
+            item_pool.append(self.create_item("Swimming Level"))
+            item_pool.append(self.create_item("Flying Level"))
+            item_pool.append(self.create_item("Climbing Level"))
+            item_pool.append(self.create_item("Jumping Level"))
+
         # Add filler items
         while len(item_pool) < total_locations:
             item_pool.append(self.create_item(self.get_filler_item_name()))
@@ -77,4 +92,5 @@ class dl4World(World):
 
     def fill_slot_data(self) -> dict:
         return {
+            "ExpModifier": self.options.exp_modifier.value,
         }

@@ -10,19 +10,20 @@ class DL4LocationData(NamedTuple):
     category: str
     code: Optional[int] = None
     loc_type: str = ""
+    required_skills: Optional[Dict[str, int]] = None
 
 def get_locations_by_category(category: str, world=None) -> Dict[str, DL4LocationData]:
-    location_dict: Dict[str, DL4LocationData] = {}
+    return {
+        name: data
+        for name, data in location_table.items()
+        if data.category == category
+    }
 
-    for name, data in location_table.items():
-        location_dict[name] = data
-
-    return location_dict
 
 
 
 location_table: dict[str, DL4LocationData] = {
-    "Grasslands - Olive Duck Race Won":     DL4LocationData("Grasslands",   1,  "side race"),
+    "Grasslands - Olive Duck Race Won":     DL4LocationData("Grasslands",   1,  "side race", required_skills={"Running":10}),
     "Grasslands - Brown Duck Race Won":     DL4LocationData("Grasslands",   2,  "side race"),
     "Swamp - Grey Duck Race Won":           DL4LocationData("Swamp",        3,  "side race"),
     "Swamp - Red Duck Race Won":            DL4LocationData("Swamp",        4,  "side race"),
@@ -59,9 +60,5 @@ location_table: dict[str, DL4LocationData] = {
     "City - Tournament Race 2 Won":         DL4LocationData("City",         35, "Tournament"),
     "City - Tournament Race 3 Won":         DL4LocationData("City",         36, "Tournament"),
     "City - Tournament Won":                DL4LocationData("City",         37, "Tournament"),
-    "Volcano - Tournament Race 1 Won":      DL4LocationData("Volcano",      38, "Tournament"),
-    "Volcano - Tournament Race 2 Won":      DL4LocationData("Volcano",      39, "Tournament"),
-    "Volcano - Tournament Race 3 Won":      DL4LocationData("Volcano",      40, "Tournament"),
-    "Volcano - Tournament Won":             DL4LocationData("Volcano",      41, "Tournament"),
-#    "Glenumbra - Wyrd Tree Wayshrine":               ESOLocationData("Glenumbra",       eso_node_id ,"wayshrine"),
+    "Volcano - Fire Duck Race Won":         DL4LocationData("Volcano",      38, "Tournament"),
 }

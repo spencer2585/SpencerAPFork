@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Optional, TYPE_CHECKING
 
 from BaseClasses import MultiWorld, Region, Entrance
@@ -18,43 +19,37 @@ if TYPE_CHECKING:
 REGION_GRAPH: Dict[str, Dict[str, object]] = {
     "Menu": {
         "locations": "Menu",
-        "exits": [],
+        "exits": ["Grasslands", "Swamp", "Mountains", "Glacier", "City", "Volcano"],
     },
     "Grasslands": {
         "locations": "Grasslands",
-        "exits": [],
+        "exits": ["Menu"],
     },
     "Swamp":{
         "locations": "Swamp",
-        "exits": [],
+        "exits": ["Menu"],
         "requires": "Swamp Access",
     },
     "Mountains":{
         "locations": "Mountains",
-        "exits": [],
+        "exits": ["Menu"],
         "requires": "Mountain Access",
     },
     "Glacier":{
         "locations": "Glacier",
-        "exits": [],
+        "exits": ["Menu"],
         "requires": "Glacier Access",
     },
     "City":{
         "locations": "City",
-        "exits": [],
+        "exits": ["Menu"],
         "requires": "City Access",
     },
     "Volcano":{
         "locations": "Volcano",
-        "exits": [],
+        "exits": ["Menu"],
         "requires": "Volcano Access",
     },
-    #Daggerfall covenant
-#    "Stros M'kai": {
-#        "locations": "Stros M'kai",
-#        "exits": ["Betnikh","Glenumbra"],
-#        "requires": "Stros M'kai Access",
-#    },
 }
 
 
@@ -66,48 +61,64 @@ def create_regions(world: "DL4World"):
     multiworld: MultiWorld = world.multiworld
     player: int = world.player
 
-    print("=== REGION CONNECTIVITY CHECK ===")
-    for region in world.multiworld.regions:
-        print(region.name, "exits:", [e.name for e in region.exits])
+    # ---------------------------------------------------------
+    # 1. Create region objects (do NOT append yet)
+    # ---------------------------------------------------------
+    regions: Dict[str, Region] = {
+        name: Region(name, player, multiworld)
+        for name in REGION_GRAPH.keys()
+    }
 
-    print("=== LOCATION COUNT CHECK ===")
+    # ---------------------------------------------------------
+    # 2. Add static locations
+    # ---------------------------------------------------------
     for region_name, data in REGION_GRAPH.items():
-        category = data["locations"]
-        if category:
-            locs = get_locations_by_category(category, world)
-            print(region_name, "->", len(locs), "locations")
-        else:
-            print(region_name, "-> Menu (no locations)")
-
-
-
-    # 1. Create all region objects
-    for region_name, data in REGION_GRAPH.items():
-        region = Region(region_name, player, multiworld)
-
-        # Add locations automatically
+        region = regions[region_name]
         category = data.get("locations")
-        if category:
-            for loc_name in get_locations_by_category(category, world).keys():
-                loc_data = location_table.get(loc_name)
-                region.locations.append(
-                    DL4Location(
-                        player,
-                        loc_name,
-                        loc_data.code if loc_data else None,
-                        region
-                    )
-                )
 
+        if category:
+            for loc_name, loc_data in location_table.items():
+                if loc_data.category == category:
+                    region.locations.append(
+                        DL4Location(player, loc_name, loc_data.code, region)
+                    )
+
+    # ---------------------------------------------------------
+    # 3. Add dynamic skill locations BEFORE registering regions
+    # ---------------------------------------------------------
+    chunk = world.options.skill_size.value
+    levels_per_skill = 150
+    num_locations = math.ceil(levels_per_skill / chunk)
+
+    def add_dynamic(region_name: str, prefix: str):
+        region = regions[region_name]
+        for i in range(1, num_locations + 1):
+            loc_name = f"{prefix} Level {i}"
+            region.locations.append(
+                DL4Location(player, loc_name, None, region)
+            )
+
+    add_dynamic("Grasslands", "Running")
+    add_dynamic("Menu", "Energy")
+    add_dynamic("Swamp", "Swimming")
+    add_dynamic("Mountains", "Flying")
+    add_dynamic("Glacier", "Climbing")
+    add_dynamic("City", "Jumping")
+
+    # ---------------------------------------------------------
+    # 4. NOW append regions to the MultiWorld
+    # ---------------------------------------------------------
+    for region in regions.values():
         multiworld.regions.append(region)
 
-    # 2. Create entrances and connect them
+    # ---------------------------------------------------------
+    # 5. Create entrances and connect regions
+    # ---------------------------------------------------------
     for region_name, data in REGION_GRAPH.items():
-        region = world.get_region(region_name)
+        region = regions[region_name]
 
         for exit_name in data.get("exits", []):
             entrance_name = f"{region_name} -> {exit_name}"
             entrance = Entrance(player, entrance_name, region)
             region.exits.append(entrance)
-            entrance.connect(world.get_region(exit_name))
-
+            entrance.connect(regions[exit_name])

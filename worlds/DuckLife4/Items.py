@@ -34,5 +34,11 @@ item_table: Dict[str, DL4ItemData] = {
     "Red Key":                          DL4ItemData("Key",              11,     ItemClassification.progression),
     "Orange Key":                       DL4ItemData("Key",              12,     ItemClassification.progression),
     "Green Key":                        DL4ItemData("Key",              13,     ItemClassification.progression),
-#    "Protective Plate":         ESOItemData("Dragonknight Skills", eso_skill_unlock_id, ItemClassification.useful),
+    "Energy Level":                     DL4ItemData("Level",            14,     ItemClassification.progression, 0),
+    "Running Level":                    DL4ItemData("Level",            15,     ItemClassification.progression, 0),
+    "Swimming Level":                   DL4ItemData("Level",            16,     ItemClassification.progression, 0),
+    "Flying Level":                     DL4ItemData("Level",            17,     ItemClassification.progression, 0),
+    "Climbing Level":                   DL4ItemData("Level",            18,     ItemClassification.progression, 0),
+    "Jumping Level":                    DL4ItemData("Level",            19,     ItemClassification.progression, 0),
+    "Victory":                          DL4ItemData("Victory",          20,     ItemClassification.progression, 0),
 }
