@@ -2,7 +2,7 @@ import worlds.LauncherComponents as LauncherComponents
 from typing import List
 from BaseClasses import Tutorial
 from worlds.AutoWorld import WebWorld, World
-from worlds.LauncherComponents import Component, SuffixIdentifier, Type, components, launch_subprocess, icon_paths
+from worlds.LauncherComponents import Type, components, launch_subprocess, icon_paths
 from .Items import ESOItem, ESOItemData, get_items_by_category, item_table, get_starting_region_item_name
 from .Locations import ESOLocation, location_table
 from .eso_options import ESOOptions, Alliance
@@ -11,6 +11,7 @@ from .Rules import set_rules
 from .Goals import set_goals
 
 from worlds.LauncherComponents import Component
+
 
 def run_client(*args):
     print("Running ESO Client")
@@ -63,21 +64,23 @@ class ESOWorld(World):
         item_pool: List[ESOItem] = []
         total_locations = len(self.multiworld.get_unfilled_locations(self.player))
 
-        # Build normal item pool
+        # Determine starting region item based on alliance (exclude from pool)
+        alliance_value = self.options.alliance.value
+        starting_item_name = get_starting_region_item_name(alliance_value)
+
+        # Build normal item pool, skipping the starting region item
         for name, data in item_table.items():
+            if name == starting_item_name:
+                continue  # Don't add to pool, will be precollected
             quantity = data.max_quantity
-            item_pool += [self.create_item(name) for _ in range(quantity)]  # Fixed range(0, quantity) → range(quantity)
+            item_pool += [self.create_item(name) for _ in range(quantity)]
 
         # Add filler items
         while len(item_pool) < total_locations:
             item_pool.append(self.create_item(self.get_filler_item_name()))
 
-        # Inject starting region item based on alliance
-        alliance_value = self.options.alliance.value
-        starting_item_name = get_starting_region_item_name(alliance_value)
+        # Inject starting region item into starting inventory
         self.multiworld.push_precollected(self.create_item(starting_item_name))
-
-        self.victory_item = self.create_item("Victory")
 
         self.multiworld.itempool += item_pool
 
@@ -102,5 +105,5 @@ class ESOWorld(World):
             "Alliance": self.options.alliance.value,
             "ZoneQuestsEnabled": self.options.zone_quests_enabled.value,
             "WayshrineChecksEnabled": self.options.wayshrine_checks_enabled.value,
-            "SkillRandomization": self.options.skill_randomization.value,
+#            "SkillRandomization": self.options.skill_randomization.value,
         }

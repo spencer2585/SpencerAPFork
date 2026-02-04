@@ -1,19 +1,10 @@
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 
 from BaseClasses import MultiWorld, Region, Entrance
 from .Locations import ESOLocation, location_table, get_locations_by_category
 
 if TYPE_CHECKING:
     from . import ESOWorld
-
-
-# ---------------------------------------------------------
-#  REGION GRAPH
-#  Add your regions here. Each entry defines:
-#   - which location category to load
-#   - which regions it connects to
-#   - which item unlocks it
-# ---------------------------------------------------------
 
 REGION_GRAPH: Dict[str, Dict[str, object]] = {
     "Menu": {
@@ -140,11 +131,6 @@ REGION_GRAPH: Dict[str, Dict[str, object]] = {
     },
 }
 
-
-# ---------------------------------------------------------
-#  REGION CREATION
-# ---------------------------------------------------------
-
 def create_regions(world: "ESOWorld"):
     multiworld: MultiWorld = world.multiworld
     player: int = world.player
@@ -164,11 +150,11 @@ def create_regions(world: "ESOWorld"):
 
 
 
-    # 1. Create all region objects
+    # Create all region objects
     for region_name, data in REGION_GRAPH.items():
         region = Region(region_name, player, multiworld)
 
-        # Add locations automatically
+        # Add locations
         category = data.get("locations")
         if category:
             for loc_name in get_locations_by_category(category, world).keys():
@@ -184,7 +170,7 @@ def create_regions(world: "ESOWorld"):
 
         multiworld.regions.append(region)
 
-    # 2. Create entrances and connect them
+    # Create entrances and connect them
     for region_name, data in REGION_GRAPH.items():
         region = world.get_region(region_name)
 

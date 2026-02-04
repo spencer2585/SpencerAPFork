@@ -20,7 +20,6 @@ def set_rules(world):
         oppRegion2 = "Stormhaven Access"
 
     for region_name, data in REGION_GRAPH.items():
-        # Apply rule to each exit (entrance) from this region
         for exit_name in data.get("exits", []):
             entrance_name = f"{region_name} -> {exit_name}"
             entrance = world.get_entrance(entrance_name)
@@ -47,7 +46,6 @@ def set_rules(world):
             if exit_name == "Coldharbor":
                 entrance.access_rule = (lambda state: state.has(required_item, player) and state.has(allianceRegion,player) and state.has("Progressive Main Quest",player, 10))
                 continue
-            # Use access_rule (old API)
             entrance.access_rule = (
                 lambda state, item=required_item: state.has(item, player)
             )
@@ -66,12 +64,12 @@ def set_rules(world):
     world.get_location("Main Quest - Valley of Blades").access_rule = lambda state: state.has(allianceRegion, player) and state.has(allianceRegion2, player) and state.has("Progressive Main Quest", player, 6)
     world.get_location("Main Quest - Shadow of Sancre Tor").access_rule = lambda state: state.has(allianceRegion, player) and state.has(allianceRegion2, player) and state.has("Progressive Main Quest", player, 7)
     world.get_location("Main Quest - Council of the Five Companions")   .access_rule = lambda state: state.has(allianceRegion, player) and state.has(allianceRegion2, player) and state.has("Progressive Main Quest", player, 8)
-    world.get_location("Main Quest - Message Across Tamriel").access_rule = lambda state: state.has(allianceRegion, player) and state.has(allianceRegion2, player) and state.has("Progressive Main Quest", player, 9) and state.has(oppRegion1, player) and state.has(oppRegion2, player)
+    world.get_location("Main Quest - Messages Across Tamriel").access_rule = lambda state: state.has(allianceRegion, player) and state.has(allianceRegion2, player) and state.has("Progressive Main Quest", player, 9) and state.has(oppRegion1, player) and state.has(oppRegion2, player)
     world.get_location("Main Quest - The Weight of Three Crowns").access_rule = lambda state: state.has(allianceRegion,player) and state.has(allianceRegion2, player) and state.has( "Progressive Main Quest",player, 10) and state.has(oppRegion1, player) and state.has(oppRegion2, player) and state.has("Coldharbor Access",player)
     world.get_location("Main Quest - God of Schemes").access_rule = lambda state: state.has(allianceRegion,player) and state.has(allianceRegion2, player) and state.has( "Progressive Main Quest",player, 11) and state.has(oppRegion1, player) and state.has(oppRegion2, player) and state.has("Coldharbor Access",player)
 
     final_loc = world.multiworld.get_location("Main Quest - God of Schemes", world.player)
-    final_loc.place_locked_item(world.victory_item)
+    final_loc.place_locked_item(world.create_item("Victory"))
 
 
 
