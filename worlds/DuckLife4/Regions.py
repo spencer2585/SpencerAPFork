@@ -33,7 +33,7 @@ REGION_GRAPH: Dict[str, Dict[str, object]] = {
     "Mountains":{
         "locations": "Mountains",
         "exits": ["Menu"],
-        "requires": "Mountain Access",
+        "requires": "Mountains Access",
     },
     "Glacier":{
         "locations": "Glacier",

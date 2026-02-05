@@ -52,10 +52,10 @@ class dl4World(World):
             quantity = data.max_quantity
             item_pool += [self.create_item(name) for _ in range(quantity)]  # Fixed range(0, quantity) → range(quantity)
 
-       #Create Skill Items
+        #Create Skill Items
         chunk = self.options.skill_size.value
         levels_per_skill = 150
-        num_items = math.ceil(total_locations / chunk)
+        num_items = math.ceil(levels_per_skill / chunk)
 
         for i in range(1, num_items + 1):
             item_pool.append(self.create_item("Energy Level"))

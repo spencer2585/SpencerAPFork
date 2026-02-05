@@ -41,4 +41,5 @@ item_table: Dict[str, DL4ItemData] = {
     "Climbing Level":                   DL4ItemData("Level",            18,     ItemClassification.progression, 0),
     "Jumping Level":                    DL4ItemData("Level",            19,     ItemClassification.progression, 0),
     "Victory":                          DL4ItemData("Victory",          20,     ItemClassification.progression, 0),
+    "Coins":                            DL4ItemData("Filler",           21,     ItemClassification.filler,      0,      10),
 }

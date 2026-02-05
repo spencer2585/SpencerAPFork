@@ -13,9 +13,10 @@ def set_rules(world):
             entrance = world.get_entrance(entrance_name)
 
             required_item = REGION_GRAPH[exit_name].get("requires")
-            entrance.access_rule = (
-                lambda state, item=required_item: state.has(item, player)
-            )
+            if required_item:
+                entrance.access_rule = (
+                    lambda state, item=required_item: state.has(item, player)
+                )
 
 
     #create rules for tournament checks
