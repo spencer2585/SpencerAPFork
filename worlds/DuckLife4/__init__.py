@@ -11,7 +11,6 @@ from .Regions import create_regions
 from .Rules import set_rules
 from .Goals import set_goals
 
-from worlds.LauncherComponents import Component
 
 class DL4Web(WebWorld):
     theme = 'stone'
@@ -24,6 +23,24 @@ class DL4Web(WebWorld):
         ["Spencer2585"]
     )]
 
+
+# Generate dynamic location IDs for skill training
+def generate_skill_location_ids():
+    locs = {}
+    SKILL_LOCATION_BASE_ID = 100
+    skill_index = 0
+
+    # Generate for all possible levels at minimum chunk size (1)
+    # This ensures IDs are consistent regardless of player options
+    for skill_name in ["Running", "Energy", "Swimming", "Flying", "Climbing", "Jumping"]:
+        for level in range(1, 151):  # 1 to 150
+            loc_name = f"{skill_name} Training {level}"
+            locs[loc_name] = SKILL_LOCATION_BASE_ID + skill_index
+            skill_index += 1
+
+    return locs
+
+
 class dl4World(World):
     """
     Duck Life 4 is the fourth installment in the popular Duck Life series. Train and race your duck around the globe and become the champion!
@@ -35,13 +52,12 @@ class dl4World(World):
     web = DL4Web()
 
     item_name_to_id = {name: data.code for name, data in item_table.items() if data.code is not None}
-    location_name_to_id = {name: data.code for name, data in location_table.items() if data.code is not None}
 
-    def generate_location_name_to_id(self):
-        locs = {}
-        for name, data in location_table.items():
-            locs[name] = data.code
-        return locs
+    # Combine static and dynamic locations
+    location_name_to_id = {
+        **{name: data.code for name, data in location_table.items() if data.code is not None},
+        **generate_skill_location_ids()
+    }
 
     def create_items(self):
         item_pool: List[DL4Item] = []
@@ -50,9 +66,9 @@ class dl4World(World):
         # Build normal item pool
         for name, data in item_table.items():
             quantity = data.max_quantity
-            item_pool += [self.create_item(name) for _ in range(quantity)]  # Fixed range(0, quantity) → range(quantity)
+            item_pool += [self.create_item(name) for _ in range(quantity)]
 
-        #Create Skill Items
+        # Create Skill Items
         chunk = self.options.skill_size.value
         levels_per_skill = 150
         num_items = math.ceil(levels_per_skill / chunk)
@@ -93,4 +109,5 @@ class dl4World(World):
     def fill_slot_data(self) -> dict:
         return {
             "ExpModifier": self.options.exp_modifier.value,
+            "SkillSize": self.options.skill_size.value,
         }

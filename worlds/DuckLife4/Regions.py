@@ -90,12 +90,22 @@ def create_regions(world: "DL4World"):
     levels_per_skill = 150
     num_locations = math.ceil(levels_per_skill / chunk)
 
-    def add_dynamic(region_name: str, prefix: str):
+    # Calculate base ID for this skill level
+    def get_skill_location_id(skill_name: str, level: int) -> int:
+        SKILL_LOCATION_BASE_ID = 100
+        skill_names = ["Running", "Energy", "Swimming", "Flying", "Climbing", "Jumping"]
+        skill_offset = skill_names.index(skill_name) * 150
+        level_offset = level - 1  # level 1 = offset 0, level 5 = offset 4, etc.
+        return SKILL_LOCATION_BASE_ID + skill_offset + level_offset
+
+    def add_dynamic(region_name: str, skill_name: str):
         region = regions[region_name]
         for i in range(1, num_locations + 1):
-            loc_name = f"{prefix} Level {i}"
+            level = i * chunk
+            loc_name = f"{skill_name} Training {level}"
+            loc_id = get_skill_location_id(skill_name, level)
             region.locations.append(
-                DL4Location(player, loc_name, None, region)
+                DL4Location(player, loc_name, loc_id, region)
             )
 
     add_dynamic("Grasslands", "Running")

@@ -97,8 +97,6 @@ from worlds.LauncherComponents import Component
 
 
 def run_client(*args):
-    print("Running ESO Client")
-    print("run_client args:", args)
     from .client import launch
     launch_subprocess(launch, name="ESOClient", args=args)
 
@@ -120,7 +118,7 @@ class ESOWeb(WebWorld):
 class ESOWorld(World):
     """
     Elder Scrolls Online is a MMORPG Set in the world of The elder Scrolls. Journey across the reagons of Tamriel while fighting
-    against various enimys
+    against various enemys
     """
     game = "Elder Scrolls Online"
     options_dataclass = ESOOptions
