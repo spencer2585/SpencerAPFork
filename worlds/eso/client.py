@@ -10,10 +10,98 @@ logger = logging.getLogger("Client")
 
 VICTORY_ITEM_ID = 149995  # eso_base_id - 5
 
-ESO_BASE = Path.home() / "Documents" / "Elder Scrolls Online" / "live"
-SAVED_VARIABLES = ESO_BASE / "SavedVariables" / "APESO.lua"
-ITEMS_FILE = ESO_BASE / "AddOns" / "APESO" / "Items.lua"
-OPTIONS_FILE = ESO_BASE / "AddOns" / "APESO" / "Options.lua"
+
+class ESOConfig:
+    """Holds ESO file paths that can be updated at runtime."""
+
+    def __init__(self):
+        self.base = Path.home() / "Documents" / "Elder Scrolls Online" / "live"
+        self.update_paths()
+
+    def update_paths(self):
+        """Update all derived paths based on current base path."""
+        self.saved_variables = self.base / "SavedVariables" / "APESO.lua"
+        self.items_file = self.base / "AddOns" / "APESO" / "Items.lua"
+        self.options_file = self.base / "AddOns" / "APESO" / "Options.lua"
+        self.apeso_addon_dir = self.base / "AddOns" / "APESO"
+
+    def set_base(self, new_path: Path):
+        """Set a new base path and update all derived paths."""
+        self.base = new_path
+        self.update_paths()
+
+
+# Create global config instance
+eso_config = ESOConfig()
+
+# For backwards compatibility, expose as module-level variables
+ESO_BASE = eso_config.base
+SAVED_VARIABLES = eso_config.saved_variables
+ITEMS_FILE = eso_config.items_file
+OPTIONS_FILE = eso_config.options_file
+APESO_ADDON_DIR = eso_config.apeso_addon_dir
+
+
+def check_eso_installation_get_errors():
+    """Check for ESO installation and APESO addon files, return list of errors."""
+    errors = []
+
+    # Check for Elder Scrolls Online base directory
+    if not eso_config.base.exists():
+        errors.append(
+            f"Elder Scrolls Online directory not found at: {eso_config.base}. "
+            f"Expected structure: Documents/Elder Scrolls Online/live/. "
+            f"Please verify your ESO installation is correct."
+        )
+        return errors
+
+    # Check for SavedVariables folder
+    if not (eso_config.base / "SavedVariables").exists():
+        errors.append(
+            f"SavedVariables folder not found at: {eso_config.base / 'SavedVariables'}. "
+            f"This folder should be created automatically by ESO. Have you launched ESO at least once?"
+        )
+
+    # Check for AddOns folder
+    if not (eso_config.base / "AddOns").exists():
+        errors.append(
+            f"AddOns folder not found at: {eso_config.base / 'AddOns'}. "
+            f"This folder should be created automatically by ESO. Have you launched ESO at least once?"
+        )
+        return errors
+
+    # Check for APESO addon folder
+    if not eso_config.apeso_addon_dir.exists():
+        errors.append(
+            f"APESO addon folder not found at: {eso_config.apeso_addon_dir}. "
+            f"Please install the APESO addon to your ESO AddOns folder."
+        )
+        return errors
+
+    # Check for Items.lua
+    if not eso_config.items_file.exists():
+        errors.append(
+            f"Items.lua not found at: {eso_config.items_file}. "
+            f"This file will be created automatically when you connect to the server."
+        )
+
+    # Check for Options.lua
+    if not eso_config.options_file.exists():
+        errors.append(
+            f"Options.lua not found at: {eso_config.options_file}. "
+            f"This file will be created automatically when you connect to the server."
+        )
+
+    # Check for APESO.lua in SavedVariables
+    if not eso_config.saved_variables.exists():
+        errors.append(
+            f"APESO.lua not found in SavedVariables at: {eso_config.saved_variables}. "
+            f"This file is created by the APESO addon when you log into a character. "
+            f"Please launch ESO, load a character, and then reload the UI (/reloadui)."
+        )
+
+    return errors
+
 
 class EsoState:
     def __init__(self):
@@ -146,8 +234,8 @@ class ItemsWriter:
         lines.append("}")
 
         try:
-            ITEMS_FILE.parent.mkdir(parents=True, exist_ok=True)
-            ITEMS_FILE.write_text("\n".join(lines), encoding="utf-8")
+            eso_config.items_file.parent.mkdir(parents=True, exist_ok=True)
+            eso_config.items_file.write_text("\n".join(lines), encoding="utf-8")
             print(f"[ESO] Wrote items.lua with {len(self.items)} items.")
         except Exception as e:
             print("[ESO] Failed to write items.lua", e)
@@ -187,8 +275,8 @@ class OptionsWriter:
         lines.append("}")
 
         try:
-            OPTIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
-            OPTIONS_FILE.write_text("\n".join(lines), encoding="utf-8")
+            eso_config.options_file.parent.mkdir(parents=True, exist_ok=True)
+            eso_config.options_file.write_text("\n".join(lines), encoding="utf-8")
             print(f"[ESO] Wrote Options.lua (SkillMode={skill_mode}, Class={char_class}, Race={char_race})")
         except Exception as e:
             print("[ESO] Failed to write Options.lua:", e)
@@ -205,8 +293,8 @@ class EsoFilePoller:
     async def run(self):
         while not self.ctx.exit_event.is_set():
             try:
-                if SAVED_VARIABLES.exists():
-                    modified = SAVED_VARIABLES.stat().st_mtime
+                if eso_config.saved_variables.exists():
+                    modified = eso_config.saved_variables.stat().st_mtime
                     if modified != self.last_modified:
                         self.last_modified = modified
                         await self.on_change(modified)
@@ -222,7 +310,7 @@ class EsoFilePoller:
             return
 
         # Pass the locked character ID so quests are read for the correct character
-        state = self.reader.parse(SAVED_VARIABLES, self.ctx.current_char_id)
+        state = self.reader.parse(eso_config.saved_variables, self.ctx.current_char_id)
         if state:
             await self.ctx.handle_eso_state(state)
 
@@ -249,6 +337,44 @@ class ESOClientCommandProcessor(ClientCommandProcessor):
             self.output("[ESO] No pending character switch.")
         else:
             self.output("[ESO] No new character detected yet.")
+        return True
+
+    def _cmd_eso_path(self, *args) -> bool:
+        """Set custom ESO mod directory path.
+
+        Usage: /eso_path <path>
+        Use /eso_path with no arguments to see the current path.
+        """
+        if not args:
+            self.output(f"[ESO] Current mod directory: {eso_config.base}")
+            self.output("[ESO] Use /eso_path <path> to set a custom path")
+            return True
+
+        # Join all arguments back together (handles spaces in path)
+        path = " ".join(args)
+        new_path = Path(path)
+
+        if not new_path.exists():
+            self.output(f"[ESO] Error: Path does not exist: {new_path}")
+            return True
+
+        if not new_path.is_dir():
+            self.output(f"[ESO] Error: Path is not a directory: {new_path}")
+            return True
+
+        # Update config
+        eso_config.set_base(new_path)
+
+        self.output(f"[ESO] Mod directory updated to: {eso_config.base}")
+
+        # Run checks
+        errors = check_eso_installation_get_errors()
+        if errors:
+            for error in errors:
+                self.output(f"[ESO] Warning: {error}")
+        else:
+            self.output("[ESO] All required files and folders found at new path!")
+
         return True
 
 
@@ -289,11 +415,11 @@ class ESOContext(CommonContext):
 
     async def sync_now(self):
         """Immediately read SavedVariables and process state."""
-        if not SAVED_VARIABLES.exists():
+        if not eso_config.saved_variables.exists():
             logger.info("[ESO] SavedVariables file not found.")
             return
         reader = SavedVariablesReader()
-        state = reader.parse(SAVED_VARIABLES, self.current_char_id)
+        state = reader.parse(eso_config.saved_variables, self.current_char_id)
         if state:
             await self.handle_eso_state(state)
 
@@ -394,6 +520,9 @@ async def item_watcher(ctx: ESOContext):
 
 async def async_main(parsed_args):
     ctx = ESOContext(parsed_args.connect, parsed_args.password)
+    errors = check_eso_installation_get_errors()
+    if errors:
+        logger.info(errors)
 
     ctx.server_task = asyncio.create_task(server_loop(ctx), name="server loop")
 
