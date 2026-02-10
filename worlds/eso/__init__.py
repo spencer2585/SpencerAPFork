@@ -7,83 +7,8 @@ from worlds.LauncherComponents import Type, components, launch_subprocess, icon_
 from .Items import ESOItem, ESOItemData, get_items_by_category, item_table, get_starting_region_item_name
 from .Locations import ESOLocation, location_table
 from .eso_options import (
-    ESOOptions, Alliance, GOAL_ZONE_NAMES, CLASS_NAMES, CLASS_SKILL_LINES,
-    RACE_NAMES, ALL_RACES, ALLIANCE_RACES,
-    ALL_WEAPON_SKILL_LINES, ALL_ARMOR_SKILL_LINES, ALL_RACIAL_SKILL_LINES, ALL_MISC_SKILL_LINES
+    ESOOptions, Alliance, GOAL_ZONE_NAMES
 )
-
-# Mapping from option skill line names to item category names
-# Most follow the pattern "{name} Skills" but some are different
-SKILL_LINE_TO_CATEGORY = {
-    # Dragonknight skill lines
-    "Ardent Flame": "Ardent Flame Skills",
-    "Draconic Power": "Draconic Power Skills",
-    "Earthen Heart": "Earthen Heart Skills",
-    # Sorcerer skill lines
-    "Dark Magic": "Dark Magic Skills",
-    "Daedric Summoning": "Daedric Summoning Skills",
-    "Storm Calling": "Storm Calling Skills",
-    # Nightblade skill lines
-    "Assassination": "Assassination Skills",
-    "Shadow": "Shadow Skills",
-    "Siphoning": "Siphoning Skills",
-    # Templar skill lines
-    "Aedric Spear": "Aedric Spear Skills",
-    "Dawn's Wrath": "Dawn's Wrath Skills",
-    "Restoring Light": "Restoring Light Skills",
-    # Warden skill lines
-    "Winter's Embrace": "Winter's Embrace Skills",
-    "Green Balance": "Green Balance Skills",
-    "Animal Companions": "Animal Companions Skills",
-    # Necromancer skill lines
-    "Grave Lord": "Grave Lord Skills",
-    "Bone Tyrant": "Bone Tyrant Skills",
-    "Living Death": "Living Death Skills",
-    # Arcanist skill lines
-    "Herald of the Tome": "Herald of the Tome Skills",
-    "Soldier of Apocrypha": "Soldier of Apocrypha Skills",
-    "Curative Runeforms": "Curative Runeforms Skills",
-    # Weapon skill lines
-    "Two Handed": "Two Handed Skills",
-    "One Hand and Shield": "One Hand Shield Skills",
-    "Dual Wield": "Dual Wield Skills",
-    "Bow": "Bow Skills",
-    "Destruction Staff": "Destruction Staff Skills",
-    "Restoration Staff": "Restoration Staff Skills",
-    # Armor skill lines
-    "Light Armor": "Light Armor Skills",
-    "Medium Armor": "Medium Armor Skills",
-    "Heavy Armor": "Heavy Armor Skills",
-    # Guild skill lines
-    "Fighters Guild": "Fighters Guild Skills",
-    "Mages Guild": "Mages Guild Skills",
-    # World skill lines (note: these use singular "Skill")
-    "Soul Magic": "Soul Magic Skill",
-    "Legerdemain": "Legerdemain Skill",
-    "Vampirism": "Vampirism Skill",
-    "Lycanthropy": "Lycanthropy Skill",
-    #Crafting Skills
-    "Alchemy": "Alchemy Skills",
-    "Blacksmithing": "Blacksmithing Skills",
-    "Clothing": "Clothing Skills",
-    "Enchanting": "Enchanting Skills",
-    "Provisioning": "Provisioning Skills",
-    "Woodworking": "Woodworking Skills",
-    # Racial skill lines
-    "Argonian": "Argonian Skills",
-    "Breton": "Breton Skills",
-    "Dark Elf": "Dark Elf Skills",
-    "High Elf": "High Elf Skills",
-    "Imperial": "Imperial Skills",
-    "Khajiit": "Khajiit Skill",
-    "Nord": "Nord Skill",
-    "Orc": "Orc Skill",
-    "Redguard": "Redguard Skill",
-    "Wood Elf": "Wood Elf Skill",
-}
-
-# All skill categories for checking if an item is a skill
-ALL_SKILL_CATEGORIES = set(SKILL_LINE_TO_CATEGORY.values())
 from .Regions import (
     create_regions, REGION_GRAPH, ALL_ZONES, ALLIANCE_STARTING_ZONES,
     ZONE_FINAL_QUESTS, MAIN_QUEST_REQUIRED_ZONES, ZONE_FINAL_QUEST_REQUIREMENTS,
@@ -131,11 +56,6 @@ class ESOWorld(World):
     goal_zone: Optional[str]
     achievable_main_quests: List[str]
     max_progressive_mq: int
-
-    # Instance variables set in create_items (for skill randomization)
-    player_class: str
-    player_race: str
-    enabled_skill_lines: Set[str]
 
     item_name_to_id = {name: data.code for name, data in item_table.items() if data.code is not None}
     location_name_to_id = {name: data.code for name, data in location_table.items() if data.code is not None}
@@ -350,91 +270,7 @@ class ESOWorld(World):
         alliance_value = self.options.alliance.value
         starting_item_name = get_starting_region_item_name(alliance_value)
 
-        # Build set of enabled skill categories based on options
-        skill_mode = self.options.skill_randomization.value
-        enabled_skill_categories: Set[str] = set()
-        enabled_skill_lines: Set[str] = set()  # Track skill line names for slot_data
-
-        # Initialize instance variables with defaults
-        self.player_class = ""
-        self.player_race = ""
-        self.enabled_skill_lines = set()
-
-        if skill_mode in [2, 3]:  # items or both
-            # Always include player's class skill lines (all 3)
-            player_class = CLASS_NAMES[self.options.character_class.value]
-            self.player_class = player_class
-            for skill_line in CLASS_SKILL_LINES[player_class]:
-                enabled_skill_lines.add(skill_line)
-                if skill_line in SKILL_LINE_TO_CATEGORY:
-                    enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[skill_line])
-
-            # Determine player's race for racial skills
-            race_option = self.options.character_race.value
-            if race_option == 0:  # any_race
-                player_race = self.random.choice(ALL_RACES)
-            elif race_option == 1:  # any_alliance_race
-                alliance_races = ALLIANCE_RACES.get(alliance_value, [])
-                if alliance_races:
-                    player_race = self.random.choice(alliance_races)
-                else:
-                    # Fallback to any random race if alliance races not configured
-                    player_race = self.random.choice(ALL_RACES)
-            else:  # specific race selected
-                player_race = RACE_NAMES.get(race_option, self.random.choice(ALL_RACES))
-
-            self.player_race = player_race
-
-            # Include player's racial skills
-            enabled_skill_lines.add(player_race)
-            if player_race in SKILL_LINE_TO_CATEGORY:
-                enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[player_race])
-
-            # Handle weapon skill lines
-            weapon_selection = self.options.weapon_selection.value
-            if weapon_selection == 2:  # all
-                for weapon in ALL_WEAPON_SKILL_LINES:
-                    enabled_skill_lines.add(weapon)
-                    if weapon in SKILL_LINE_TO_CATEGORY:
-                        enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[weapon])
-            elif weapon_selection == 1:  # random - pick 2
-                weapons = list(ALL_WEAPON_SKILL_LINES)
-                selected_weapons = self.random.sample(weapons, min(2, len(weapons)))
-                for weapon in selected_weapons:
-                    enabled_skill_lines.add(weapon)
-                    if weapon in SKILL_LINE_TO_CATEGORY:
-                        enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[weapon])
-            else:  # manual
-                for weapon in self.options.weapon_skill_lines.value:
-                    enabled_skill_lines.add(weapon)
-                    if weapon in SKILL_LINE_TO_CATEGORY:
-                        enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[weapon])
-
-            # Handle armor skill lines
-            armor_selection = self.options.armor_selection.value
-            if armor_selection == 1:  # all
-                for armor in ALL_ARMOR_SKILL_LINES:
-                    enabled_skill_lines.add(armor)
-                    if armor in SKILL_LINE_TO_CATEGORY:
-                        enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[armor])
-            else:  # manual
-                for armor in self.options.armor_skill_lines.value:
-                    enabled_skill_lines.add(armor)
-                    if armor in SKILL_LINE_TO_CATEGORY:
-                        enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[armor])
-
-            # Include misc skill lines (guilds, world skills)
-            for skill_line in self.options.misc_skill_lines.value:
-                enabled_skill_lines.add(skill_line)
-                if skill_line in SKILL_LINE_TO_CATEGORY:
-                    enabled_skill_categories.add(SKILL_LINE_TO_CATEGORY[skill_line])
-
-            # Store for slot_data
-            self.enabled_skill_lines = enabled_skill_lines
-
-        # Build normal item pool, skipping items we don't need
-        skill_items: List[ESOItem] = []
-
+        # Build normal item pool
         for name, data in item_table.items():
             if name == starting_item_name:
                 continue  # Don't add to pool, will be precollected
@@ -447,21 +283,6 @@ class ESOWorld(World):
             if data.category == "Zone Wayshrines Access" and not self.options.zone_wayshrines_enabled:
                 continue
 
-            # Handle skill items based on skill randomization mode
-            if data.category in ALL_SKILL_CATEGORIES:
-                if skill_mode == 0:  # none - skip all skill items
-                    continue
-                if skill_mode == 1:  # skyshards only - skip skill items
-                    continue
-                if skill_mode in [2, 3]:  # items or both
-                    if data.category not in enabled_skill_categories:
-                        continue
-                    # Collect skill items separately for "both" mode handling
-                    quantity = data.max_quantity
-                    for _ in range(quantity):
-                        skill_items.append(self.create_item(name))
-                    continue
-
             # Limit Progressive Main Quest items to what's achievable
             if name == "Progressive Main Quest":
                 quantity = self.max_progressive_mq
@@ -469,64 +290,6 @@ class ESOWorld(World):
                 quantity = data.max_quantity
 
             item_pool += [self.create_item(name) for _ in range(quantity)]
-
-        # Handle "both" mode - ensure 3 skyshards per skill, remove skills if needed
-        if skill_mode == 3:  # both
-            num_skills = len(skill_items)
-            skyshards_needed = num_skills * 3
-            available_space = total_locations - len(item_pool)
-
-            if skyshards_needed + num_skills > available_space:
-                # Need to remove some skills to make room
-                # Weight removal: higher chance to remove non-class skills
-                player_class = CLASS_NAMES[self.options.character_class.value]
-                player_class_categories = {
-                    SKILL_LINE_TO_CATEGORY[skill_line]
-                    for skill_line in CLASS_SKILL_LINES[player_class]
-                    if skill_line in SKILL_LINE_TO_CATEGORY
-                }
-
-                # Sort skills by removal priority (class skills last)
-                def removal_weight(item: ESOItem) -> float:
-                    item_data = item_table.get(item.name)
-                    if item_data and item_data.category in player_class_categories:
-                        return 0.2  # Low chance to remove class skills
-                    return 1.0  # Higher chance to remove other skills
-
-                # Calculate how many skills to remove
-                items_to_fit = available_space // 4  # Each skill needs 1 item + 3 skyshards
-                skills_to_remove = num_skills - items_to_fit
-
-                if skills_to_remove > 0:
-                    # Weighted random removal
-                    weights = [removal_weight(item) for item in skill_items]
-                    for _ in range(min(skills_to_remove, len(skill_items))):
-                        if not skill_items:
-                            break
-                        # Recalculate weights
-                        weights = [removal_weight(item) for item in skill_items]
-                        total_weight = sum(weights)
-                        if total_weight == 0:
-                            break
-                        # Pick a random skill to remove
-                        r = self.random.random() * total_weight
-                        cumulative = 0
-                        for i, w in enumerate(weights):
-                            cumulative += w
-                            if r <= cumulative:
-                                skill_items.pop(i)
-                                break
-
-            # Add skill items and corresponding skyshards
-            item_pool.extend(skill_items)
-            for _ in range(len(skill_items) * 3):
-                item_pool.append(self.create_item("Skyshard"))
-        elif skill_mode == 2:  # items only
-            item_pool.extend(skill_items)
-        elif skill_mode == 1:  # skyshards only
-            # Add skyshards based on some calculation (e.g., a fixed number or based on locations)
-            # For now, just fill with skyshards as filler
-            pass
 
         # Add filler items
         while len(item_pool) < total_locations:
@@ -554,11 +317,6 @@ class ESOWorld(World):
         return ESOItem(name, data.classification, data.code, self.player)
 
     def fill_slot_data(self) -> dict:
-        # Build enabled skill categories dict for the game mod
-        enabled_categories = {}
-        for skill_line in self.enabled_skill_lines:
-            enabled_categories[skill_line] = True
-
         return {
             "Alliance": self.options.alliance.value,
             "Goal": self.options.goal.value,
@@ -566,8 +324,4 @@ class ESOWorld(World):
             "SelectedZones": list(self.selected_zones),
             "ZoneQuestsEnabled": self.options.zone_quests_enabled.value,
             "WayshrineChecksEnabled": self.options.wayshrine_checks_enabled.value,
-            "SkillRandomization": self.options.skill_randomization.value,
-            "CharacterClass": self.player_class,
-            "CharacterRace": self.player_race,
-            "EnabledSkillCategories": enabled_categories,
         }
