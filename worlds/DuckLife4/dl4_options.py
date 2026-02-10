@@ -3,16 +3,16 @@ from dataclasses import dataclass
 from Options import PerGameCommonOptions, Choice, Toggle, NamedRange, Range
 
 
-class ExpModifier(NamedRange):
+class XpModifier(NamedRange):
     """Experience modifier for skill leveling"""
-    display_name = "Exp Modifier"
-    default = 8
-    range_start = 1
+    display_name = "Xp Modifier"
+    default = 1
+    range_start = 16
     range_end = 255
     special_range_names = {
-        "half": default // 2,
         "normal": default,
         "double": default * 2,
+        "Quadruple": default * 4,
     }
 
 class SkillSize(Range):
@@ -24,5 +24,5 @@ class SkillSize(Range):
 
 @dataclass
 class DL4Options(PerGameCommonOptions):
-    exp_modifier: ExpModifier
+    xp_modifier: XpModifier
     skill_size: SkillSize
