@@ -108,6 +108,6 @@ class dl4World(World):
 
     def fill_slot_data(self) -> dict:
         return {
-            "ExpModifier": self.options.exp_modifier.value,
+            "XpModifier": self.options.xp_modifier.value,
             "SkillSize": self.options.skill_size.value,
         }
