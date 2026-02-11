@@ -46,18 +46,6 @@ class IncludedZones(OptionSet):
         "Shadowfen", "Eastmarch", "The Rift", "Craglorn", "Coldharbour"
     ])
 
-class ExcludedZones(OptionSet):
-    """Zones to exclude from the randomizer pool.
-    These zones will not be included even if listed in Included Zones."""
-    display_name = "Excluded Zones"
-    valid_keys = frozenset([
-        "Stros M'kai", "Betnikh", "Glenumbra", "Stormhaven", "Rivenspire",
-        "Bangkorai", "Alik'r Desert", "Khenarthi's Roost", "Auridon",
-        "Grahtwood", "Greenshade", "Malabal Tor", "Reaper's March",
-        "Bleakrock Isle", "Bal Foyen", "Stonefalls", "Deshaan",
-        "Shadowfen", "Eastmarch", "The Rift", "Craglorn", "Coldharbour"
-    ])
-
 class GoalZone(Choice):
     """Which zone's final quest is the goal (only used when Goal is set to Final Zone Quest).
     Any: The generator will pick a zone from your included zones.
@@ -118,12 +106,6 @@ class WayshrineChecksEnabled(Toggle):
     display_name = "Enable Wayshrine Checks"
     default = True
 
-class ZoneWayshrinesEnabled(Toggle):
-    """Enable or disable zone wayshrine unlock items.
-    When enabled, receiving a zone's wayshrine item unlocks all wayshrines in that zone."""
-    display_name = "Enable Zone Wayshrine Unlocks"
-    default = False
-
 #class DelveChecksEnabled(Toggle):
 #    """Enable or disable checks for completing Delves"""
 #    display_name = "Enable Delve Checks"
@@ -141,10 +123,8 @@ class ESOOptions(PerGameCommonOptions):
     goal: Goal
     zone_count: ZoneCount
     included_zones: IncludedZones
-    excluded_zones: ExcludedZones
     goal_zone: GoalZone
     zone_quests_enabled: ZoneQuestsEnabled
     wayshrine_checks_enabled: WayshrineChecksEnabled
-    zone_wayshrines_enabled: ZoneWayshrinesEnabled
 #    delve_checks_enabled:DelveChecksEnabled
 #    dungeon_checks_enabled:DungeonChecksEnabled

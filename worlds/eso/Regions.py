@@ -132,7 +132,7 @@ REGION_GRAPH: Dict[str, Dict[str, object]] = {
     },
     "Stormhaven": {
         "locations": "Stormhaven",
-        "exits": ["Glenumbra","Rivenspire","Bangkorai","Deshaan","Grahtwood","Alik'r Desert","Craglorn","Coldharbour"],
+        "exits": ["Glenumbra","Rivenspire","Bangkorai","Deshaan","Grahtwood","Alik'r Desert","Coldharbour"],
         "requires": "Stormhaven Access",
     },
     "Rivenspire": {
@@ -163,7 +163,7 @@ REGION_GRAPH: Dict[str, Dict[str, object]] = {
     },
     "Grahtwood": {
         "locations": "Grahtwood",
-        "exits": ["Auridon","Deshaan","Greenshade","Stormhaven","Malabal Tor","Craglorn","Coldharbour"],
+        "exits": ["Auridon","Deshaan","Greenshade","Stormhaven","Malabal Tor","Coldharbour"],
         "requires": "Grahtwood Access",
     },
     "Greenshade": {
@@ -194,7 +194,7 @@ REGION_GRAPH: Dict[str, Dict[str, object]] = {
     },
     "Stonefalls": {
         "locations": "Stonefalls",
-        "exits": ["Bal Foyen","The Rift","Deshaan","Glenumbra","Bleakrock Isle","Auridon","Craglorn"],
+        "exits": ["Bal Foyen","The Rift","Deshaan","Glenumbra","Bleakrock Isle","Auridon"],
         "requires": "Stonefalls Access",
     },
     "Deshaan": {
@@ -220,7 +220,7 @@ REGION_GRAPH: Dict[str, Dict[str, object]] = {
     #Misc
     "Craglorn": {
         "locations": "Craglorn",
-        "exits": ["Bangkorai","Grahtwood","Stormhaven","Stonefalls"],
+        "exits": ["Bangkorai"],
         "requires": "Craglorn Access",
     },
     "Coldharbour": {

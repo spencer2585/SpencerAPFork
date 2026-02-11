@@ -71,9 +71,6 @@ class ESOWorld(World):
         else:
             available_zones = set(ALL_ZONES)
 
-        #Remove excluded zones
-        available_zones -= set(self.options.excluded_zones.value)
-
         #Determine required zones based on goal
         required_zones: Set[str] = {starting_zone}
 
@@ -119,7 +116,7 @@ class ESOWorld(World):
         missing_zones = required_zones - available_zones
         if missing_zones:
             raise Exception(
-                f"ESO: Required zones are excluded or not in included zones: {missing_zones}. "
+                f"ESO: Required zones are not in included zones: {missing_zones}. "
                 f"Your starting zone ({starting_zone}) and goal zone must be available."
             )
 
@@ -255,9 +252,6 @@ class ESOWorld(World):
         for name, data in location_table.items():
             # Quest toggle
             if data.loc_type == "zone quest" and not self.options.zone_quests_enabled:
-                continue
-            # Wayshrine toggle
-            if data.loc_type == "wayshrine" and not self.options.wayshrine_checks_enabled:
                 continue
             locs[name] = data.code
         return locs

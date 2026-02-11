@@ -10,8 +10,6 @@ ALLIANCE_STARTING_REGIONS = {
 
 eso_base_id: int = 150000
 eso_region_unlock_id: int = eso_base_id
-eso_wayshrine_unlock_id: int = eso_base_id + 1000
-eso_skill_unlock_id: int = eso_base_id + 2100
 
 class ESOItem(Item):
     game: str = "Elder Scrolls Online"

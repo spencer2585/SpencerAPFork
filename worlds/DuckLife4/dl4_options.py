@@ -7,12 +7,12 @@ class XpModifier(NamedRange):
     """Experience modifier for skill leveling"""
     display_name = "Xp Modifier"
     default = 1
-    range_start = 16
-    range_end = 255
+    range_start = 1
+    range_end = 16
     special_range_names = {
         "normal": default,
         "double": default * 2,
-        "Quadruple": default * 4,
+        "quadruple": default * 4,
     }
 
 class SkillSize(Range):

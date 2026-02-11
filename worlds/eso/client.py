@@ -325,6 +325,46 @@ class ESOClientCommandProcessor(ClientCommandProcessor):
 
         return True
 
+    def _cmd_eso_goal(self) -> bool:
+        """Display your victory condition for this ESO seed.
+        """
+        ctx: ESOContext = self.ctx
+
+        if not hasattr(ctx, 'slot_data') or not ctx.slot_data:
+            self.output("[ESO] Goal information not yet available. Connect to the server first.")
+            return True
+
+        slot_data = ctx.slot_data
+
+        # Get goal type (0 = main quest, 1 = final zone quest)
+        goal_type = slot_data.get("Goal", 0)
+        alliance = slot_data.get("Alliance", 0)
+        goal_zone = slot_data.get("GoalZone")
+
+        # Alliance names
+        alliance_names = {
+            0: "Aldmeri Dominion",
+            1: "Daggerfall Covenant",
+            2: "Ebonheart Pact"
+        }
+
+        alliance_name = alliance_names.get(alliance, "Unknown")
+
+        self.output("=" * 50)
+        self.output(f"[ESO] Your Alliance: {alliance_name}")
+
+        if goal_type == 0:
+            # Main Quest goal
+            self.output("[ESO] Victory Condition: Complete the Main Quest")
+            self.output("[ESO] Final Quest: 'God of Schemes' in Coldharbour")
+        else:
+            # Final Zone Quest goal
+            if goal_zone:
+                self.output(f"[ESO] Victory Condition: Complete the final quest in {goal_zone}")
+
+        self.output("=" * 50)
+        return True
+
 
 class ESOContext(CommonContext):
     game = "Elder Scrolls Online"
@@ -342,6 +382,7 @@ class ESOContext(CommonContext):
         # Item handling
         self.items_writer = ItemsWriter()
         self._last_item_count = 0
+        self.slot_data = {}
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -419,6 +460,8 @@ class ESOContext(CommonContext):
             print("[ESO] Connected packet received!")
             print("[ESO] Connected → clearing Items.lua")
             self.items_writer.reset()
+            self.slot_data = args.get("slot_data", {})
+            print(f"[ESO] Goal information loaded: {self.slot_data.get('Goal')} - {self.slot_data.get('GoalZone', 'Main Quest')}")
 
 
 async def item_watcher(ctx: ESOContext):
