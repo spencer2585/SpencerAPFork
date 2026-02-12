@@ -19,24 +19,6 @@ def set_rules(world):
                 )
 
 
-    #create rules for tournament checks
-    world.get_location("Grasslands - Tournament Race 1 Won").access_rule = lambda state: state.has("Grasslands Tournament Ticket", player)
-    world.get_location("Grasslands - Tournament Race 2 Won").access_rule = lambda state: state.has("Grasslands Tournament Ticket", player)
-    world.get_location("Grasslands - Tournament Race 3 Won").access_rule = lambda state: state.has("Grasslands Tournament Ticket", player)
-    world.get_location("Swamp - Tournament Race 1 Won").access_rule = lambda state: state.has("Swamp Tournament Ticket", player)
-    world.get_location("Swamp - Tournament Race 2 Won").access_rule = lambda state: state.has("Swamp Tournament Ticket", player)
-    world.get_location("Swamp - Tournament Race 3 Won").access_rule = lambda state: state.has("Swamp Tournament Ticket", player)
-    world.get_location("Mountains - Tournament Race 1 Won").access_rule = lambda state: state.has("Mountains Tournament Ticket", player)
-    world.get_location("Mountains - Tournament Race 2 Won").access_rule = lambda state: state.has("Mountains Tournament Ticket", player)
-    world.get_location("Mountains - Tournament Race 3 Won").access_rule = lambda state: state.has("Mountains Tournament Ticket", player)
-    world.get_location("Glacier - Tournament Race 1 Won").access_rule = lambda state: state.has("Glacier Tournament Ticket", player)
-    world.get_location("Glacier - Tournament Race 2 Won").access_rule = lambda state: state.has("Glacier Tournament Ticket", player)
-    world.get_location("Glacier - Tournament Race 3 Won").access_rule = lambda state: state.has("Glacier Tournament Ticket", player)
-    world.get_location("City - Tournament Race 1 Won").access_rule = lambda state: state.has("City Tournament Ticket", player)
-    world.get_location("City - Tournament Race 2 Won").access_rule = lambda state: state.has("City Tournament Ticket", player)
-    world.get_location("City - Tournament Race 3 Won").access_rule = lambda state: state.has("City Tournament Ticket", player)
-    world.get_location("Volcano - Fire Duck Race Won").access_rule = lambda state: state.has("Red Key", player) and state.has("Orange Key", player) and state.has("Green Key", player)
-
 
     chunk = world.options.skill_size.value
 
@@ -51,7 +33,20 @@ def set_rules(world):
                         return False
                 return True
 
-            location.access_rule = skill_rule
+            if "Mountains - Tournament Race" in loc_name:
+                location.access_rule = lambda state: state.has("Mountains Tournament Ticket", player) and skill_rule(state)
+            elif "Swamp - Tournament Race" in loc_name:
+                location.access_rule = lambda state: state.has("Swamp Tournament Ticket", player) and skill_rule(state)
+            elif "Grasslands - Tournament Race" in loc_name:
+                location.access_rule = lambda state: state.has("Grasslands Tournament Ticket", player) and skill_rule(state)
+            elif "Glacier - Tournament Race" in loc_name:
+                location.access_rule = lambda state: state.has("Glacier Tournament Ticket", player) and skill_rule(state)
+            elif "city - Tournament Race" in loc_name:
+                location.access_rule = lambda state: state.has("City Tournament Ticket", player) and skill_rule(state)
+            elif loc_name == "Volcano - Fire Duck Race Won" in loc_name:
+                location.access_rule = lambda state: state.has("Red Key", player) and state.has("Orange Key", player) and state.has("Green Key", player) and skill_rule(state)
+            else:
+                location.access_rule = skill_rule
 
     world.get_location("Volcano - Fire Duck Race Won").place_locked_item(world.create_item("Victory"))
 
