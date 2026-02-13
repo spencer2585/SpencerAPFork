@@ -1,6 +1,8 @@
 import worlds.LauncherComponents as LauncherComponents
-from typing import List, Set, Dict, Optional
+import settings
+from typing import List, Set, Dict, Optional, ClassVar
 from collections import deque
+from pathlib import Path
 from BaseClasses import Tutorial
 from worlds.AutoWorld import WebWorld, World
 from worlds.LauncherComponents import Type, components, launch_subprocess, icon_paths
@@ -29,6 +31,12 @@ components.append(
     Component("ESO Client", func=run_client, component_type=Type.CLIENT)
 )
 
+class EsoSettings(settings.Group):
+    class ModsFolder(settings.UserFolderPath):
+        description = "Path to the Elder Scrolls Online mods folder (note point to live folder not addons)"
+
+    mods_folder: ModsFolder = ModsFolder(Path.home() / "Documents" / "Elder Scrolls Online")
+
 class ESOWeb(WebWorld):
     theme = 'stone'
     tutorials = [Tutorial(
@@ -50,6 +58,7 @@ class ESOWorld(World):
     options: ESOOptions
     required_client_version = (0, 0, 1)
     web = ESOWeb()
+    settings: ClassVar[EsoSettings]
 
     # Instance variables set in generate_early
     selected_zones: Set[str]

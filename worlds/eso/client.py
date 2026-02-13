@@ -5,24 +5,32 @@ from CommonClient import CommonContext, ClientCommandProcessor, ClientStatus, ge
 from Utils import async_start
 from pathlib import Path
 import time
+from . import ESOWorld
 
 logger = logging.getLogger("Client")
 
 VICTORY_ITEM_ID = 149995  # eso_base_id - 5
+
+mods_folder_str = str(ESOWorld.settings.mods_folder)
+mods_folder_path = Path(mods_folder_str)
 
 
 class ESOConfig:
     """Holds ESO file paths that can be updated at runtime."""
 
     def __init__(self):
-        self.base = Path.home() / "Documents" / "Elder Scrolls Online" / "live"
+        if mods_folder_path.exists():
+            self.base = mods_folder_path
+        else:
+            print("something wrong")
+            self.base = Path.home() / "Documents" / "Elder Scrolls Online" / "live"
         self.update_paths()
 
     def update_paths(self):
         """Update all derived paths based on current base path."""
-        self.saved_variables = self.base / "SavedVariables" / "APESO.lua"
-        self.items_file = self.base / "AddOns" / "APESO" / "Items.lua"
-        self.apeso_addon_dir = self.base / "AddOns" / "APESO"
+        self.saved_variables = self.base /"live" / "SavedVariables" / "APESO.lua"
+        self.items_file = self.base /"live" / "AddOns" / "APESO" / "Items.lua"
+        self.apeso_addon_dir = self.base /"live" / "AddOns" / "APESO"
 
     def set_base(self, new_path: Path):
         """Set a new base path and update all derived paths."""
@@ -47,21 +55,29 @@ def check_eso_installation_get_errors():
     # Check for Elder Scrolls Online base directory
     if not eso_config.base.exists():
         errors.append(
-            f"Elder Scrolls Online directory not found at: {eso_config.base}. "
-            f"Expected structure: Documents/Elder Scrolls Online/live/. "
-            f"Please verify your ESO installation is correct."
+            f"Elder Scrolls Online directory not found at: {eso_config.base}. \n"
+            f"Expected structure: Documents/Elder Scrolls Online/live/. \n"
+            f"Please verify your ESO installation is correct.\n"
+            f"If your mods folder is not located at: {eso_config.base} check the readme on github for more details "
         )
         return errors
 
     # Check for SavedVariables folder
-    if not (eso_config.base / "SavedVariables").exists():
+    if not (eso_config.base / "live").exists():
+        errors.append(f"Elder Scrolls Online directory not found at: {eso_config.base}. "
+            f"Expected structure: Documents/Elder Scrolls Online/live/. "
+            f"Please verify your ESO installation is correct."
+            f"If your mods folder is not located at: {eso_config.base} check the readme on github for more details "
+        )
+        return errors
+    if not (eso_config.base / "live" / "SavedVariables").exists():
         errors.append(
             f"SavedVariables folder not found at: {eso_config.base / 'SavedVariables'}. "
             f"This folder should be created automatically by ESO. Have you launched ESO at least once?"
         )
 
     # Check for AddOns folder
-    if not (eso_config.base / "AddOns").exists():
+    if not (eso_config.base / "live" / "AddOns").exists():
         errors.append(
             f"AddOns folder not found at: {eso_config.base / 'AddOns'}. "
             f"This folder should be created automatically by ESO. Have you launched ESO at least once?"
@@ -287,44 +303,6 @@ class ESOClientCommandProcessor(ClientCommandProcessor):
             self.output("[ESO] No new character detected yet.")
         return True
 
-    def _cmd_eso_path(self, *args) -> bool:
-        """Set custom ESO mod directory path.
-
-        Usage: /eso_path <path>
-        Use /eso_path with no arguments to see the current path.
-        """
-        if not args:
-            self.output(f"[ESO] Current mod directory: {eso_config.base}")
-            self.output("[ESO] Use /eso_path <path> to set a custom path")
-            return True
-
-        # Join all arguments back together (handles spaces in path)
-        path = " ".join(args)
-        new_path = Path(path)
-
-        if not new_path.exists():
-            self.output(f"[ESO] Error: Path does not exist: {new_path}")
-            return True
-
-        if not new_path.is_dir():
-            self.output(f"[ESO] Error: Path is not a directory: {new_path}")
-            return True
-
-        # Update config
-        eso_config.set_base(new_path)
-
-        self.output(f"[ESO] Mod directory updated to: {eso_config.base}")
-
-        # Run checks
-        errors = check_eso_installation_get_errors()
-        if errors:
-            for error in errors:
-                self.output(f"[ESO] Warning: {error}")
-        else:
-            self.output("[ESO] All required files and folders found at new path!")
-
-        return True
-
     def _cmd_eso_goal(self) -> bool:
         """Display your victory condition for this ESO seed.
         """
@@ -364,6 +342,7 @@ class ESOClientCommandProcessor(ClientCommandProcessor):
 
         self.output("=" * 50)
         return True
+
 
 
 class ESOContext(CommonContext):
@@ -463,6 +442,22 @@ class ESOContext(CommonContext):
             self.slot_data = args.get("slot_data", {})
             print(f"[ESO] Goal information loaded: {self.slot_data.get('Goal')} - {self.slot_data.get('GoalZone', 'Main Quest')}")
 
+    def run_gui(self):
+        from kvui import GameManager
+
+        class EsoManager(GameManager):
+            logging_pairs = [
+                ("Client", "Archipelago")
+            ]
+            base_title = "Archipelago ESO Client"
+
+            def build(self):
+                ret = super().build()
+                return ret
+
+        self.ui = EsoManager(self)
+        self.ui_task = asyncio.create_task(self.ui.async_run(), name="UI")
+
 
 async def item_watcher(ctx: ESOContext):
     try:
@@ -499,11 +494,9 @@ async def item_watcher(ctx: ESOContext):
         raise
 
 
+
 async def async_main(parsed_args):
     ctx = ESOContext(parsed_args.connect, parsed_args.password)
-    errors = check_eso_installation_get_errors()
-    if errors:
-        logger.info(errors)
 
     ctx.server_task = asyncio.create_task(server_loop(ctx), name="server loop")
 
@@ -511,10 +504,22 @@ async def async_main(parsed_args):
     ctx.poller_task = asyncio.create_task(poller.run(), name="eso poller")
     ctx.item_task = asyncio.create_task(item_watcher(ctx), name="item watcher")
 
-    if gui_enabled:
-        ctx.run_gui()
-    else:
-        ctx.run_cli()
+    ctx.run_gui()
+
+    try:
+        import asyncio as _a
+        async def _after():
+            for d in (0.2, 0.6):
+                await _a.sleep(d)
+                errors = check_eso_installation_get_errors()
+                if errors and d == 0.6:
+                    logger.info(errors)
+                elif d == 0.6:
+                    logger.info("Successfully connected to mod.")
+
+        _a.get_event_loop().create_task(_after())
+    except Exception:
+        pass
 
     await ctx.exit_event.wait()
     await ctx.shutdown()
