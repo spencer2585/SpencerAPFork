@@ -4,6 +4,7 @@ from BaseClasses import Location
 eso_base_id: int = 150000
 eso_node_id: int = eso_base_id
 eso_quest_id:int = eso_base_id+1000
+eso_delve_id:int = eso_base_id+11000
 
 class ESOLocation(Location):
     game: str = "Elder Scrolls Online"
@@ -23,12 +24,16 @@ def get_locations_by_category(category: str, world=None) -> Dict[str, ESOLocatio
 
         # Apply YAML toggles
         if world:
-            # Quest toggle
-            if data.loc_type == "quest" and not world.options.zone_quests_enabled:
+            # Zone Quest toggle
+            if data.loc_type == "zone quest" and not world.options.zone_quests_enabled:
                 continue
 
             # Wayshrine toggle
             if data.loc_type == "wayshrine" and not world.options.wayshrine_checks_enabled:
+                continue
+
+            #Delve toggle
+            if data.loc_type == "delve" and not world.option.delve_checks_enabled:
                 continue
 
         location_dict[name] = data
@@ -566,4 +571,114 @@ location_table: dict[str, ESOLocationData] = {
     "Main Quest - Messages Across Tamriel":              ESOLocationData("Main Quest", eso_quest_id +4780, "main quest"),
     "Main Quest - The Weight of Three Crowns":          ESOLocationData("Main Quest", eso_quest_id +4783, "main quest"),
     "Main Quest - God of Schemes":                      ESOLocationData("Main Quest", eso_quest_id +4847, "main quest"),
+
+    #Delves
+    "Glenumbra - Ilessan Tower Delve Complete":         ESOLocationData("Glenumbra", eso_delve_id + 1, "Delve"),
+    "Glenumbra - Silumm Delve Complete":                ESOLocationData("Glenumbra", eso_delve_id + 2 ,"Delve"),
+    "Glenumbra - Mines of Khuras Delve Complete":       ESOLocationData("Glenumbra", eso_delve_id + 3, "Delve"),
+    "Glenumbra - Enduum Delve Complete":                ESOLocationData("Glenumbra", eso_delve_id + 4, "Delve"),
+    "Glenumbra - Ebon Crypt Delve Complete":            ESOLocationData("Glenumbra", eso_delve_id + 5, "Delve"),
+    "Glenumbra - Cryptwatch Fort Delve Complete":       ESOLocationData("Glenumbra", eso_delve_id + 6, "Delve"),
+    "Rivenspire - Hildune's Secret Refuge Delve Complete":ESOLocationData("Rivenspire", eso_delve_id + 7, "Delve"),
+    "Rivenspire - Orc's Finger Ruins Delve Complete":   ESOLocationData("Rivenspire", eso_delve_id + 8, "Delve"),
+    "Rivenspire - Erokii Ruins Delve Complete":         ESOLocationData("Rivenspire", eso_delve_id + 9, "Delve"),
+    "Rivenspire - Crestshade Mines Delve Complete":     ESOLocationData("Rivenspire", eso_delve_id + 10, "Delve"),
+    "Rivenspire - Flyleaf Catacombs Delve Complete":    ESOLocationData("Rivenspire", eso_delve_id + 11, "Delve"),
+    "Rivenspire - Tribulation Crypt Delve Complete":    ESOLocationData("Rivenspire", eso_delve_id + 12, "Delve"),
+    "Stormhaven - Bearclaw Mine Delve Complete":        ESOLocationData("Stormhaven", eso_delve_id + 13, "Delve"),
+    "Stormhaven - Norvulk Ruins Delve Complete":        ESOLocationData("Stormhaven", eso_delve_id + 14, "Delve"),
+    "Stormhaven - Pariah Catacombs Delve Complete":     ESOLocationData("Stormhaven", eso_delve_id + 15, "Delve"),
+    "Stormhaven - Farangel's Delve Delve Complete":     ESOLocationData("Stormhaven", eso_delve_id + 16, "Delve"),
+    "Stormhaven - Portdun Watch Delve Complete":        ESOLocationData("Stormhaven", eso_delve_id + 17, "Delve"),
+    "Stormhaven - Koeglin Mine Delve Complete":         ESOLocationData("Stormhaven", eso_delve_id + 18, "Delve"),
+    "Bankorai - Troll's Toothpick Delve Complete":      ESOLocationData("Bankorai", eso_delve_id + 19, "Delve"),
+    "Bankorai - Torog's Spite Delve Complete":          ESOLocationData("Bankorai", eso_delve_id + 20, "Delve"),
+    "Bankorai - Viridian Watch Delve Complete":         ESOLocationData("Bankorai", eso_delve_id + 21, "Delve"),
+    "Bankorai - Crypt of the Exiles Delve Complete":    ESOLocationData("Bankorai", eso_delve_id + 22, "Delve"),
+    "Bankorai - Rubble Butte Delve Complete":           ESOLocationData("Bankorai", eso_delve_id + 23, "Delve"),
+    "Bankorai - Klathzgar Delve Complete":              ESOLocationData("Bankorai", eso_delve_id + 24, "Delve"),
+    "Alik'r Desert - Santaki Delve Complete":           ESOLocationData("Alik'r Desert", eso_delve_id + 25, "Delve"),
+    "Alik'r Desert - Divad's Chagrin Mine Delve Complete":ESOLocationData("Alik'r Desert", eso_delve_id + 26, "Delve"),
+    "Alik'r Desert - Aldunz Delve Complete":            ESOLocationData("Alik'r Desert", eso_delve_id + 27, "Delve"),
+    "Alik'r Desert - Sandblown Mine Delve Complete":    ESOLocationData("Alik'r Desert", eso_delve_id + 28, "Delve"),
+    "Alik'r Desert - Yldzuun Delve Complete":           ESOLocationData("Alik'r Desert", eso_delve_id + 29, "Delve"),
+    "Alik'r Desert - Coldrock Digging Delve Complete":  ESOLocationData("Alik'r Desert", eso_delve_id + 30, "Delve"),
+    "Auridon - Mehrunes' Spite Delve Complete":         ESOLocationData("Auridon", eso_delve_id + 31, "Delve"),
+    "Auridon - Wansalen Delve Complete":                ESOLocationData("Auridon", eso_delve_id + 32, "Delve"),
+    "Auridon - Bewan Delve Complete":                   ESOLocationData("Auridon", eso_delve_id + 33, "Delve"),
+    "Auridon - Entila's Folly Delve Complete":          ESOLocationData("Auridon", eso_delve_id + 34, "Delve"),
+    "Auridon - Ondil Delve Complete":                   ESOLocationData("Auridon", eso_delve_id + 35, "Delve"),
+    "Auridon - Del's Claim Delve Complete":             ESOLocationData("Auridon", eso_delve_id + 36, "Delve"),
+    "Grahtwood - Wormroot Depths Delve Complete":       ESOLocationData("Grahtwood", eso_delve_id + 37, "Delve"),
+    "Grahtwood - Vinedeath Cave Delve Complete":        ESOLocationData("Grahtwood", eso_delve_id + 38, "Delve"),
+    "Grahtwood - Burroot Kwama Mine Delve Complete":    ESOLocationData("Grahtwood", eso_delve_id + 39, "Delve"),
+    "Grahtwood - The Scuttle Pit Delve Complete":       ESOLocationData("Grahtwood", eso_delve_id + 40, "Delve"),
+    "Grahtwood - Mobar Mine Delve Complete":            ESOLocationData("Grahtwood", eso_delve_id + 41, "Delve"),
+    "Grahtwood - Ne Salas Delve Complete":              ESOLocationData("Grahtwood", eso_delve_id + 42, "Delve"),
+    "Greenshade - Barrow Trench Delve Complete":        ESOLocationData("Greenshade", eso_delve_id + 43, "Delve"),
+    "Greenshade - The Underroot Delve Complete":        ESOLocationData("Greenshade", eso_delve_id + 44, "Delve"),
+    "Greenshade - Harridan's Lair Delve Complete":      ESOLocationData("Greenshade", eso_delve_id + 45, "Delve"),
+    "Greenshade - Gurzag's Mine Delve Complete":        ESOLocationData("Greenshade", eso_delve_id + 46, "Delve"),
+    "Greenshade - Naril Nagaia Delve Complete":         ESOLocationData("Greenshade", eso_delve_id + 47, "Delve"),
+    "Greenshade - Carac Dena Delve Complete":           ESOLocationData("Greenshade", eso_delve_id + 48, "Delve"),
+    "Malabal Tor - Black Vine Ruins Delve Complete":    ESOLocationData("Malabal Tor", eso_delve_id + 49, "Delve"),
+    "Malabal Tor - Roots of Silvenar Delve Complete":   ESOLocationData("Malabal Tor", eso_delve_id + 50, "Delve"),
+    "Malabal Tor - Shael Ruins Delve Complete":         ESOLocationData("Malabal Tor", eso_delve_id + 51, "Delve"),
+    "Malabal Tor - Tomb of the Apostates Delve Complete":ESOLocationData("Malabal Tor", eso_delve_id + 52, "Delve"),
+    "Malabal Tor - Hoarvor Pit Delve Complete":         ESOLocationData("Malabal Tor", eso_delve_id + 53, "Delve"),
+    "Malabal Tor - Dead Man's Drop Delve Complete":     ESOLocationData("Malabal Tor", eso_delve_id + 54, "Delve"),
+    "Reaper's March - Fardir's Folly Delve Complete":   ESOLocationData("Reaper's March", eso_delve_id + 55, "Delve"),
+    "Reaper's March - Kuna's Delve Delve Complete":     ESOLocationData("Reaper's March", eso_delve_id + 56, "Delve"),
+    "Reaper's March - Jode's Light Delve Complete":     ESOLocationData("Reaper's March", eso_delve_id + 57, "Delve"),
+    "Reaper's March - Thibaut's Cairn Delve Complete":  ESOLocationData("Reaper's March", eso_delve_id + 58, "Delve"),
+    "Reaper's March - Claw's Strike Delve Complete":    ESOLocationData("Reaper's March", eso_delve_id + 59, "Delve"),
+    "Reaper's March - Weeping Wind Cave Delve Complete":ESOLocationData("Reaper's March", eso_delve_id + 60, "Delve"),
+    "Stonefalls - Inner Sea Armature Delve Complete":   ESOLocationData("Stonefalls", eso_delve_id + 61, "Delve"),
+    "Stonefalls - Emberflint Mine Delve Complete":      ESOLocationData("Stonefalls", eso_delve_id + 62, "Delve"),
+    "Stonefalls - Mephala's Nest Delve Complete":       ESOLocationData("Stonefalls", eso_delve_id + 63, "Delve"),
+    "Stonefalls - Hightide Hollow Delve Complete":      ESOLocationData("Stonefalls", eso_delve_id + 64, "Delve"),
+    "Stonefalls - Softloam Cavern Delve Complete":      ESOLocationData("Stonefalls", eso_delve_id + 65, "Delve"),
+    "Stonefalls - Sheogorath's Tongue Delve Complete":  ESOLocationData("Stonefalls", eso_delve_id + 66, "Delve"),
+    "Deshaan - Knife Ear Grotto Delve Complete":        ESOLocationData("Deshaan", eso_delve_id + 67, "Delve"),
+    "Deshaan - The Corpse Garden Delve Complete":       ESOLocationData("Deshaan", eso_delve_id + 68, "Delve"),
+    "Deshaan - Triple Circle Mine Delve Complete":      ESOLocationData("Deshaan", eso_delve_id + 69, "Delve"),
+    "Deshaan - Taleon's Crag Delve Complete":           ESOLocationData("Deshaan", eso_delve_id + 70, "Delve"),
+    "Deshaan - Lady Llarel's Shelter Delve Complete":   ESOLocationData("Deshaan", eso_delve_id + 71, "Delve"),
+    "Deshaan - Lower Bthanual Delve Complete":          ESOLocationData("Deshaan", eso_delve_id + 72, "Delve"),
+    "Shadowfen - Shrine of the Black Maw Delve Complete":ESOLocationData("Shadowfen", eso_delve_id + 73, "Delve"),
+    "Shadowfen - Broken Tusk Delve Complete":           ESOLocationData("Shadowfen", eso_delve_id + 74, "Delve"),
+    "Shadowfen - Grandranen Ruins Delve Complete":      ESOLocationData("Shadowfen", eso_delve_id + 75, "Delve"),
+    "Shadowfen - Atanaz Ruins Delve Complete":          ESOLocationData("Shadowfen", eso_delve_id + 76, "Delve"),
+    "Shadowfen - Onkobra Kwama Mine Delve Complete":    ESOLocationData("Shadowfen", eso_delve_id + 77, "Delve"),
+    "Shadowfen - Chid-Moska Ruins Delve Complete":      ESOLocationData("Shadowfen", eso_delve_id + 78, "Delve"),
+    "Eastmarch - The Chill Hollow Delve Complete":      ESOLocationData("Eastmarch", eso_delve_id + 79, "Delve"),
+    "Eastmarch - Icehammer's Vault Delve Complete":     ESOLocationData("Eastmarch", eso_delve_id + 80, "Delve"),
+    "Eastmarch - The Bastard's Tomb Delve Complete":    ESOLocationData("Eastmarch", eso_delve_id + 81, "Delve"),
+    "Eastmarch - Stormcrag Crypt Delve Complete":       ESOLocationData("Eastmarch", eso_delve_id + 82, "Delve"),
+    "Eastmarch - Old Sord's Cave Delve Complete":       ESOLocationData("Eastmarch", eso_delve_id + 83, "Delve"),
+    "Eastmarch - The Frigid Grotto Delve Complete":     ESOLocationData("Eastmarch", eso_delve_id + 84, "Delve"),
+    "The Rift - Broken Helm Hollow Delve Complete":     ESOLocationData("The Rift", eso_delve_id + 85, "Delve"),
+    "The Rift - Fort Greenwall Delve Complete":         ESOLocationData("The Rift", eso_delve_id + 86, "Delve"),
+    "The Rift - Faldar's Tooth Delve Complete":         ESOLocationData("The Rift", eso_delve_id + 87, "Delve"),
+    "The Rift - Avanchnzel Delve Complete":             ESOLocationData("The Rift", eso_delve_id + 88, "Delve"),
+    "The Rift - Snapleg Cave Delve Complete":           ESOLocationData("The Rift", eso_delve_id + 89, "Delve"),
+    "The Rift - Shroud Hearth Barrow Delve Complete":   ESOLocationData("The Rift", eso_delve_id + 90, "Delve"),
+    "Craglorn - Fearfangs Cavern Delve Complete":       ESOLocationData("Craglorn", eso_delve_id + 91, "Delve"),
+    "Craglorn - Buried Sands Delve Complete":           ESOLocationData("Craglorn", eso_delve_id + 92, "Delve"),
+    "Craglorn - Mtharnaz Delve Complete":               ESOLocationData("Craglorn", eso_delve_id + 93, "Delve"),
+    "Craglorn - Serpent's Nest Delve Complete":         ESOLocationData("Craglorn", eso_delve_id + 94, "Delve"),
+    "Craglorn - Ruins of Kardala Delve Complete":       ESOLocationData("Craglorn", eso_delve_id + 95, "Delve"),
+    "Craglorn - Tombs of the Na-Totambu Delve Complete":ESOLocationData("Craglorn", eso_delve_id + 96, "Delve"),
+    "Craglorn - Loth'Na Caverns Delve Complete":        ESOLocationData("Craglorn", eso_delve_id + 97, "Delve"),
+    "Craglorn - Rkhardahrk Delve Complete":             ESOLocationData("Craglorn", eso_delve_id + 98, "Delve"),
+    "Craglorn - Zalgaz's Den Delve Complete":           ESOLocationData("Craglorn", eso_delve_id + 99, "Delve"),
+    "Craglorn - Exarch's Stronghold Delve Complete":    ESOLocationData("Craglorn", eso_delve_id + 100, "Delve"),
+    "Craglorn - The Howling Sepulchers Delve Complete": ESOLocationData("Craglorn", eso_delve_id + 101, "Delve"),
+    "Craglorn - Ilthag's Undertower Delve Complete":    ESOLocationData("Craglorn", eso_delve_id + 102, "Delve"),
+    "Craglorn - Hircine's Haunt Delve Complete":        ESOLocationData("Craglorn", eso_delve_id + 103, "Delve"),
+    "Craglorn - Chiselshriek Mine Delve Complete":      ESOLocationData("Craglorn", eso_delve_id + 104, "Delve"),
+    "Craglorn - Rkundzelft Delve Complete":             ESOLocationData("Craglorn", eso_delve_id + 105, "Delve"),
+    "Craglorn - Haddock's Market Delve Complete":       ESOLocationData("Craglorn", eso_delve_id + 106, "Delve"),
+    "Craglorn - Balamath Delve Complete":               ESOLocationData("Craglorn", eso_delve_id + 107, "Delve"),
+    "Craglorn - Molavar Delve Complete":                ESOLocationData("Craglorn", eso_delve_id + 108, "Delve"),
 }

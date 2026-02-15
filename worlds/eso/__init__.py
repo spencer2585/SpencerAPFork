@@ -282,8 +282,8 @@ class ESOWorld(World):
             if data.zone is not None and data.zone not in self.selected_zones:
                 continue
 
-            # Skip zone wayshrine items if option is disabled
-            if data.category == "Zone Wayshrines Access" and not self.options.zone_wayshrines_enabled:
+            #Skip nonQuest Delve Access items if delve checks disabled
+            if data.category == "Delve Access" and not self.options.delve_checks_enabled:
                 continue
 
             # Limit Progressive Main Quest items to what's achievable
@@ -327,4 +327,5 @@ class ESOWorld(World):
             "SelectedZones": list(self.selected_zones),
             "ZoneQuestsEnabled": self.options.zone_quests_enabled.value,
             "WayshrineChecksEnabled": self.options.wayshrine_checks_enabled.value,
+            "DelveChecksEnabled": self.options.delve_checks_enabled.value,
         }

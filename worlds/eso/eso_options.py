@@ -106,10 +106,10 @@ class WayshrineChecksEnabled(Toggle):
     display_name = "Enable Wayshrine Checks"
     default = True
 
-#class DelveChecksEnabled(Toggle):
-#    """Enable or disable checks for completing Delves"""
-#    display_name = "Enable Delve Checks"
-#    default = True
+class DelveChecksEnabled(Toggle):
+    """Enable or disable checks for completing Delves, also turns off item requirements for delves not used in enabled quests"""
+    display_name = "Enable Delve Checks"
+    default = True
 
 #class DungeonChecksEnabled(Toggle):
 #    """Enable or disable checks for completing Dungeons"""
@@ -126,5 +126,5 @@ class ESOOptions(PerGameCommonOptions):
     goal_zone: GoalZone
     zone_quests_enabled: ZoneQuestsEnabled
     wayshrine_checks_enabled: WayshrineChecksEnabled
-#    delve_checks_enabled:DelveChecksEnabled
+    delve_checks_enabled:DelveChecksEnabled
 #    dungeon_checks_enabled:DungeonChecksEnabled
