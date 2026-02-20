@@ -30,6 +30,7 @@ class ESOConfig:
         """Update all derived paths based on current base path."""
         self.saved_variables = self.base /"live" / "SavedVariables" / "APESO.lua"
         self.items_file = self.base /"live" / "AddOns" / "APESO" / "Items.lua"
+        self.options_file = self.base /"live" / "AddOns" / "APESO" / "Options.lua"
         self.apeso_addon_dir = self.base /"live" / "AddOns" / "APESO"
 
     def set_base(self, new_path: Path):
@@ -116,7 +117,7 @@ class EsoState:
         self.char_id = None
         self.node_info = []
         self.completed_quests = set()
-
+        self.completed_delves = set()
 
 class SavedVariablesReader:
 
@@ -201,6 +202,26 @@ class SavedVariablesReader:
                                     state.completed_quests.add(int(line[lb+1:rb]))
                                 except ValueError:
                                     pass
+
+        #Delves
+        idx = text.find("delveClears")
+        if idx != -1:
+            b1 = text.find("{", idx)
+            b2 = self.find_matching_brace(text, b1)
+            if b1 != -1 and b2 != -1:
+                block = text[b1 + 1:b2]
+                for line in block.splitlines():
+                    line = line.strip()
+                    if line.startswith("--"):
+                        continue
+                    lb = line.find("[")
+                    rb = line.find("]")
+                    if lb != -1 and rb != -1 and "true" in line:
+                        try:
+                            delve_id = int(line[lb + 1:rb])
+                            state.completed_delves.add(delve_id)
+                        except ValueError:
+                            pass
 
         return state
 
@@ -362,6 +383,7 @@ class ESOContext(CommonContext):
         self.items_writer = ItemsWriter()
         self._last_item_count = 0
         self.slot_data = {}
+        self.force_resync_on_connect = True
 
     async def server_auth(self, password_requested: bool = False):
         if password_requested and not self.password:
@@ -425,6 +447,9 @@ class ESOContext(CommonContext):
         for q in state.completed_quests:
             locations.add(151_000 + q)
 
+        for delve_id in state.completed_delves:
+            locations.add(11_000 + delve_id)
+
         new = locations - self.checked_locations
 
         if new:
@@ -476,6 +501,7 @@ async def item_watcher(ctx: ESOContext):
                 )
 
                 ctx._last_item_count = len(ctx.items_received)
+                ctx.force_resync_on_connect = False
 
                 # Check for Victory item and send goal complete
                 for item in ctx.items_received:

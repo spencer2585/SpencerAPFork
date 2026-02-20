@@ -18,6 +18,7 @@ class Goal(Choice):
     display_name = "Goal"
     option_main_quest = 0
     option_final_zone_quest = 1
+#    option_dungeon_delver = 2
     default = 0
 
 class ZoneCount(Range):
@@ -106,10 +107,12 @@ class WayshrineChecksEnabled(Toggle):
     display_name = "Enable Wayshrine Checks"
     default = True
 
-class DelveChecksEnabled(Toggle):
-    """Enable or disable checks for completing Delves, also turns off item requirements for delves not used in enabled quests"""
-    display_name = "Enable Delve Checks"
-    default = True
+class DelvesPerRegion(Range):
+    """Maximum number of dungeons selected from each unlocked region"""
+    display_name = "dungeons_per_region"
+    range_start = 0
+    range_end = 18
+    default = 6
 
 #class DungeonChecksEnabled(Toggle):
 #    """Enable or disable checks for completing Dungeons"""
@@ -126,5 +129,5 @@ class ESOOptions(PerGameCommonOptions):
     goal_zone: GoalZone
     zone_quests_enabled: ZoneQuestsEnabled
     wayshrine_checks_enabled: WayshrineChecksEnabled
-    delve_checks_enabled:DelveChecksEnabled
+    delves_per_region:DelvesPerRegion
 #    dungeon_checks_enabled:DungeonChecksEnabled

@@ -34,9 +34,9 @@ def get_starting_region_item_name(alliance_value: int) -> str:
     return ALLIANCE_STARTING_REGIONS[alliance_value]
 
 item_table: Dict[str, ESOItemData] = {
-    "Skyshard":                 ESOItemData("Filler",       eso_base_id-6),
+    "1000 Gold Expansion":      ESOItemData("Filler",       eso_base_id-6),
     "Victory":                  ESOItemData("Main Quest",   eso_base_id - 5,            ItemClassification.progression, 0),
-    "Progressive Main Quest":   ESOItemData("Main Quest",   eso_base_id-4,              ItemClassification.progression,11),
+    "Progressive Main Quest":   ESOItemData("Main Quest",   eso_base_id-4,              ItemClassification.progression,9),
     #Zone Access Items
     "Glenumbra Access":         ESOItemData("Zone Access",  eso_region_unlock_id+3,     ItemClassification.progression, 1, 1 , "Glenumbra"),
     "Stormhaven Access":        ESOItemData("Zone Access",  eso_region_unlock_id+19,    ItemClassification.progression, 1, 1, "Stormhaven"),
@@ -88,7 +88,7 @@ item_table: Dict[str, ESOItemData] = {
     "Coldrock Diggings Access": ESOItemData("Delve Access",eso_region_unlock_id+330,  ItemClassification.progression, 1, 1, "Alik'r Desert"),
     "Sandblown Mine Access":    ESOItemData("Delve Access",eso_region_unlock_id+331,  ItemClassification.progression, 1, 1, "Alik'r Desert"),
     "Yldzuun Access":           ESOItemData("Delve Access",eso_region_unlock_id+332,  ItemClassification.progression, 1, 1, "Alik'r Desert"),
-    "Trog's Spite Access":      ESOItemData("Delve Access",eso_region_unlock_id+333,  ItemClassification.progression, 1, 1, "Bangkorai"),
+    "Torog's Spite Access":      ESOItemData("Delve Access",eso_region_unlock_id+333,  ItemClassification.progression, 1, 1, "Bangkorai"),
     "Troll's Toothpick Access": ESOItemData("Delve Access",eso_region_unlock_id+334,  ItemClassification.progression, 1, 1, "Bangkorai"),
     "Viridian Watch Access":    ESOItemData("Delve Access",eso_region_unlock_id+335,  ItemClassification.progression, 1, 1, "Bangkorai"),
     "Crypt of the Exiles Access":ESOItemData("Delve Access",eso_region_unlock_id+336, ItemClassification.progression, 1, 1, "Bangkorai"),
@@ -134,7 +134,7 @@ item_table: Dict[str, ESOItemData] = {
     "Black Vine Ruins Access":  ESOItemData("Delve Access",eso_region_unlock_id+473,  ItemClassification.progression, 1, 1, "Malabal Tor"),
     "The Scuttle Pit Access":   ESOItemData("Delve Access",eso_region_unlock_id+475,  ItemClassification.progression, 1, 1, "Grahtwood"),
     "Vinedeath Cave Access":    ESOItemData("Delve Access",eso_region_unlock_id+477,  ItemClassification.progression, 1, 1, "Grahtwood"),
-    "Woormroot Depths Access":  ESOItemData("Delve Access",eso_region_unlock_id+478,  ItemClassification.progression, 1, 1, "Grahtwood"),
+    "Wormroot Depths Access":  ESOItemData("Delve Access",eso_region_unlock_id+478,  ItemClassification.progression, 1, 1, "Grahtwood"),
     "Snapleg Cave Access":      ESOItemData("Delve Access",eso_region_unlock_id+480,  ItemClassification.progression, 1, 1, "The Rift"),
     "Fort Greenwall Access":    ESOItemData("Delve Access",eso_region_unlock_id+481,  ItemClassification.progression, 1, 1, "The Rift"),
     "Shroud Hearth Barrow Access":ESOItemData("Delve Access",eso_region_unlock_id+482,ItemClassification.progression, 1, 1, "The Rift"),
@@ -151,10 +151,10 @@ item_table: Dict[str, ESOItemData] = {
     "Barrow Trench Access":     ESOItemData("Delve Access",eso_region_unlock_id+580,  ItemClassification.progression, 1, 1, "Greenshade"),
     "Craglorn Access":          ESOItemData("Zone Access",  eso_region_unlock_id+888,   ItemClassification.progression, 1, 1, "Craglorn"),
     "Molavar Access":           ESOItemData("Delve Access",eso_region_unlock_id+889,  ItemClassification.progression, 1, 1, "Craglorn"),
-    "Rkundzelft Access":        ESOItemData("Delve Access",eso_region_unlock_id+990,  ItemClassification.progression, 1, 1, "Craglorn"),
+    "Rkundzelft Access":        ESOItemData("Delve Access",eso_region_unlock_id+890,  ItemClassification.progression, 1, 1, "Craglorn"),
     "Serpent's Nest Access":    ESOItemData("Delve Access",eso_region_unlock_id+891,  ItemClassification.progression, 1, 1, "Craglorn"),
     "Ilthag's Undertower Access":ESOItemData("Delve Access",eso_region_unlock_id+892, ItemClassification.progression, 1, 1, "Craglorn"),
-    "Runs of Kardala Access":   ESOItemData("Delve Access",eso_region_unlock_id+893,  ItemClassification.progression, 1, 1, "Craglorn"),
+    "Ruins of Kardala Access":  ESOItemData("Delve Access",eso_region_unlock_id+893,  ItemClassification.progression, 1, 1, "Craglorn"),
     "Loth'Na Caverns Access":   ESOItemData("Delve Access",eso_region_unlock_id+894,  ItemClassification.progression, 1, 1, "Craglorn"),
     "Rkhardahrk Access":        ESOItemData("Delve Access",eso_region_unlock_id+895,  ItemClassification.progression, 1, 1, "Craglorn"),
     "Haddock's Market Access":  ESOItemData("Delve Access",eso_region_unlock_id+896,  ItemClassification.progression, 1, 1, "Craglorn"),
