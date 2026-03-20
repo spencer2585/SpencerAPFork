@@ -1,6 +1,6 @@
 {
-    "game": "Elder Scrolls Online",
-    "world_version": "1.0.0",
-    "minimum_ap_version": "0.6.3",
-    "authors": ["Spencer2585"]
+	"game": "Elder Scrolls Online",
+	"minimum_ap_version": "0.6.4",
+	"world_version": "0.3.0",
+	"authors": ["Spencer2585"]
 }

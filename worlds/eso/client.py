@@ -23,7 +23,7 @@ class ESOConfig:
             self.base = mods_folder_path
         else:
             print("something wrong")
-            self.base = Path.home() / "Documents" / "Elder Scrolls Online" / "live"
+            self.base = Path.home() / "Documents" / "Elder Scrolls Online"
         self.update_paths()
 
     def update_paths(self):
@@ -113,21 +113,22 @@ def check_eso_installation_get_errors():
 
 class EsoState:
     def __init__(self):
-        self.version = None
+        self.version = (0, 3, 0)
         self.char_id = None
         self.node_info = []
         self.completed_quests = set()
         self.completed_delves = set()
 
+
 class SavedVariablesReader:
 
-    def parse(self, path: Path, locked_char_id: str = None):
-        """Parse SavedVariables file.
+    def parse(self, path: Path, seed: str, locked_char_id: str = None):
+        """Parse SavedVariables file for a specific seed.
 
         Args:
             path: Path to the SavedVariables file
+            seed: The seed string to look up in savedVariables
             locked_char_id: If provided, use this character ID for quest lookups
-                           instead of the CharID from the file
         """
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
@@ -137,79 +138,75 @@ class SavedVariablesReader:
 
         state = EsoState()
 
-        # VERSION
-        idx = text.find("version")
-        if idx != -1:
-            eq = text.find("=", idx)
-            end = min([p for p in [
-                text.find(",", eq), text.find("\n", eq), text.find("}", eq)
-            ] if p != -1], default=-1)
-            if eq != -1 and end != -1:
-                try:
-                    state.version = int(text[eq + 1:end].strip())
-                except ValueError:
-                    pass
+        # Find the seed-specific block
+        seed_marker = f'["{seed}"]'
+        seed_idx = text.find(seed_marker)
 
-        # CHAR ID (current character from file)
-        idx = text.find("CharID")
-        if idx != -1:
-            eq = text.find("=", idx)
-            q1 = text.find('"', eq)
-            q2 = text.find('"', q1 + 1)
-            if q1 != -1 and q2 != -1:
-                state.char_id = text[q1 + 1:q2].strip()
+        if seed_idx == -1:
+            print(f"[ESO] Seed '{seed}' not found in SavedVariables")
+            return None
 
-        # NODE INFO (account-wide)
-        idx = text.find("NodeInfo")
+        # Find the braces for this seed's data block
+        seed_block_start = text.find("{", seed_idx)
+        seed_block_end = self.find_matching_brace(text, seed_block_start)
+
+        if seed_block_start == -1 or seed_block_end == -1:
+            print(f"[ESO] Could not parse seed block for '{seed}'")
+            return None
+
+        seed_block = text[seed_block_start:seed_block_end + 1]
+
+        # NODE INFO
+        idx = seed_block.find("NodeInfo")
         if idx != -1:
-            b1 = text.find("{", idx)
-            b2 = self.find_matching_brace(text, b1)
+            b1 = seed_block.find("{", idx)
+            b2 = self.find_matching_brace(seed_block, b1)
             if b1 != -1 and b2 != -1:
-                block = text[b1 + 1:b2]
+                block = seed_block[b1 + 1:b2]
                 for line in block.splitlines():
                     line = line.strip()
                     if line.startswith("--"):
                         continue
-                    if "true" in line:
-                        state.node_info.append(True)
-                    elif "false" in line:
-                        state.node_info.append(False)
+                    lb = line.find("[")
+                    rb = line.find("]")
+                    if lb != -1 and rb != -1 and "true" in line:
+                        try:
+                            node_id = int(line[lb + 1:rb])
+                            # Convert to location ID: base 150000 + node_id
+                            location_id = 150_000 + node_id
+                            state.node_info.append(location_id)
+                        except ValueError:
+                            pass
 
-        # COMPLETED QUESTS BY CHAR
-        # Use locked_char_id if provided, otherwise use char_id from file
-        quest_char_id = locked_char_id if locked_char_id else state.char_id
-        idx = text.find("CompletedQuestsByChar")
-        if idx != -1 and quest_char_id:
-            b1 = text.find("{", idx)
-            b2 = self.find_matching_brace(text, b1)
-            if b1 != -1 and b2 != -1:
-                block = text[b1 + 1:b2]
-                marker = f'["{quest_char_id}"]'
-                cidx = block.find(marker)
-                if cidx != -1:
-                    cb1 = block.find("{", cidx)
-                    cb2 = self.find_matching_brace(block, cb1)
-                    if cb1 != -1 and cb2 != -1:
-                        char_block = block[cb1 + 1:cb2]
-                        for line in char_block.splitlines():
-                            line = line.strip()
-                            if line.startswith("--"):
-                                continue
-                            lb = line.find("[")
-                            rb = line.find("]")
-                            if lb != -1 and rb != -1 and "true" in line:
-                                try:
-                                    state.completed_quests.add(int(line[lb+1:rb]))
-                                except ValueError:
-                                    pass
-
-        #Delves
-        idx = text.find("delveClears")
+        # COMPLETED QUESTS
+        idx = seed_block.find("CompletedQuests")
         if idx != -1:
-            b1 = text.find("{", idx)
-            b2 = self.find_matching_brace(text, b1)
+            b1 = seed_block.find("{", idx)
+            b2 = self.find_matching_brace(seed_block, b1)
             if b1 != -1 and b2 != -1:
-                block = text[b1 + 1:b2]
+                block = seed_block[b1 + 1:b2]
+                for line in block.splitlines():
+                    line = line.strip()
+                    if line.startswith("--"):
+                        continue
+                    lb = line.find("[")
+                    rb = line.find("]")
+                    if lb != -1 and rb != -1 and "true" in line:
+                        try:
+                            quest_id = int(line[lb + 1:rb])
+                            # Convert to location ID: base 151000 + quest_id
+                            location_id = 151_000 + quest_id
+                            state.completed_quests.add(location_id)
+                        except ValueError:
+                            pass
+
+        # DELVE CLEARS
+        idx = seed_block.find("delveClears")
+        if idx != -1:
+            b1 = seed_block.find("{", idx)
+            b2 = self.find_matching_brace(seed_block, b1)
+            if b1 != -1 and b2 != -1:
+                block = seed_block[b1 + 1:b2]
                 for line in block.splitlines():
                     line = line.strip()
                     if line.startswith("--"):
@@ -219,7 +216,9 @@ class SavedVariablesReader:
                     if lb != -1 and rb != -1 and "true" in line:
                         try:
                             delve_id = int(line[lb + 1:rb])
-                            state.completed_delves.add(delve_id)
+                            # Convert to location ID: base 11000 + delve_id
+                            location_id = 11_000 + delve_id
+                            state.completed_delves.add(location_id)
                         except ValueError:
                             pass
 
@@ -246,7 +245,7 @@ class ItemsWriter:
         self.write_file()
 
     def add_item(self, item_id, location_id):
-        self.items.append((item_id, location_id))
+        self.items.append(item_id)
         self.write_file()
 
     def set_all(self, items):
@@ -256,8 +255,8 @@ class ItemsWriter:
     def write_file(self):
         lines = ["APESO_ReceivedItems = {"]
 
-        for item_id, location_id in self.items:
-            lines.append(f"    {{ item_id = {item_id}, location_id = {location_id} }},")
+        for item_id in self.items:
+            lines.append(f"    {{ item_id = {item_id}}},")
 
         lines.append("}")
 
@@ -267,6 +266,38 @@ class ItemsWriter:
             print(f"[ESO] Wrote items.lua with {len(self.items)} items.")
         except Exception as e:
             print("[ESO] Failed to write items.lua", e)
+
+
+class OptionsWriter:
+    def __init__(self):
+        self.current_seed = None
+
+    def write_file(self, slot_data):
+        """Write options from slot_data to Options.lua"""
+        self.current_seed = str(slot_data.get("seed", ""))
+
+        lines = ["APESO_ReceivedOptions = {"]
+
+        lines.append(f'    [\"seed\"] = "{self.current_seed}",')
+
+        # Extract options from slot_data
+        lines.append(f"    [\"alliance\"] = {slot_data.get('Alliance', 0)},")
+        lines.append(f"    [\"goal\"] = {slot_data.get('Goal', 0)},")
+        lines.append(f'    [\"goal_zone\"] = "{slot_data.get("GoalZone", "")}",')
+        lines.append(f"    [\"zone_quests_enabled\"] = {1 if slot_data.get('ZoneQuestsEnabled', True) else 0},")
+        lines.append(f"    [\"wayshrine_checks_enabled\"] = {1 if slot_data.get('WayshrineChecksEnabled', True) else 0},")
+        lines.append(
+            f"    [\"delves_per_region\"] = {slot_data.get('DelvesNum', 0)},")  # Note: uses 'DelvesNum' from your fill_slot_data
+        lines.append(f"    [\"goldCap\"] = {slot_data.get('GoldCap', 0)},")
+
+        lines.append("}")
+
+        try:
+            eso_config.options_file.parent.mkdir(parents=True, exist_ok=True)
+            eso_config.options_file.write_text("\n".join(lines), encoding="utf-8")
+            print(f"[ESO] Wrote Options.lua with seed: {self.current_seed}")
+        except Exception as e:
+            print("[ESO] Failed to write Options.lua", e)
 
 class EsoFilePoller:
 
@@ -292,6 +323,11 @@ class EsoFilePoller:
     async def on_change(self, modified):
         if time.time() - modified > 10:
             print("Ignoring stale SavedVariables.")
+            return
+
+        seed = self.ctx.options_writer.current_seed
+        if not seed:
+            print("[ESO] No seed available yet, skipping parse")
             return
 
         # Pass the locked character ID so quests are read for the correct character
@@ -381,6 +417,7 @@ class ESOContext(CommonContext):
 
         # Item handling
         self.items_writer = ItemsWriter()
+        self.options_writer = OptionsWriter()
         self._last_item_count = 0
         self.slot_data = {}
         self.force_resync_on_connect = True
@@ -400,7 +437,7 @@ class ESOContext(CommonContext):
         self.items_writer.reset()
 
         for item in items:
-            self.items_writer.add_item(item.item, item.location)
+            self.items_writer.add_item(item.item)
 
     async def sync_now(self):
         """Immediately read SavedVariables and process state."""
@@ -440,17 +477,9 @@ class ESOContext(CommonContext):
         # convert checks to AP IDs
         locations = set()
 
-        for idx, done in enumerate(state.node_info, start=1):
-            if done:
-                locations.add(150_000 + (idx - 1))
-
-        for q in state.completed_quests:
-            locations.add(151_000 + q)
-
-        for delve_id in state.completed_delves:
-            locations.add(11_000 + delve_id)
-
-        new = locations - self.checked_locations
+        locations.update(state.node_info)
+        locations.update(state.completed_delves)
+        locations.update(state.completed_delves)
 
         if new:
             await self.send_msgs([{
@@ -458,13 +487,26 @@ class ESOContext(CommonContext):
                 "locations": list(new)
             }])
 
+        if self.slot_data.get("Goal") == 2:  # all_delves goal
+            selected_delves = set(self.slot_data.get("SelectedDelves", []))
+            if selected_delves and selected_delves.issubset(state.completed_delves):
+                if not self.finished_game:
+                    await self.send_msgs([{
+                        "cmd": "StatusUpdate",
+                        "status": ClientStatus.CLIENT_GOAL
+                    }])
+                    self.finished_game = True
+
     def on_package(self, cmd: str, args: dict):
         """Handle incoming packets from the server."""
         if cmd == "Connected":
+            self.force_resync_on_connect = True
             print("[ESO] Connected packet received!")
             print("[ESO] Connected → clearing Items.lua")
             self.items_writer.reset()
             self.slot_data = args.get("slot_data", {})
+
+            self.options_writer.write_file(self.slot_data)
             print(f"[ESO] Goal information loaded: {self.slot_data.get('Goal')} - {self.slot_data.get('GoalZone', 'Main Quest')}")
 
     def run_gui(self):
@@ -496,7 +538,7 @@ async def item_watcher(ctx: ESOContext):
                 print(f"[ESO] Item sync: {len(ctx.items_received)} items")
 
                 ctx.items_writer.set_all(
-                    (item.item, item.location)
+                    item.item
                     for item in ctx.items_received
                 )
 

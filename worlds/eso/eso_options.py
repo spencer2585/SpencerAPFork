@@ -18,22 +18,23 @@ class Goal(Choice):
     display_name = "Goal"
     option_main_quest = 0
     option_final_zone_quest = 1
-#    option_dungeon_delver = 2
+    option_dungeon_delver = 2
     default = 0
 
 class ZoneCount(Range):
     """Number of zones to include in the randomizer.
     Set to 0 to include all available zones.
     The generator will ensure connectivity from your starting zone to the goal.
-    (Note at least 5 are required for main quest goal)"""
+    (Note at least 4 are required for main quest goal)"""
     display_name = "Zone Count"
-    range_start = 0
+    range_start = 3
     range_end = 22
     default = 7
 
 class IncludedZones(OptionSet):
     """Zones to include in the randomizer pool.
-    Leave empty to include all zones (minus any in Excluded Zones).
+    Leave empty to include all zones.
+    Coldharbour is automatically included when required by your goal.
     Valid zones: Stros M'kai, Betnikh, Glenumbra, Stormhaven, Rivenspire, Bangkorai,
     Alik'r Desert, Khenarthi's Roost, Auridon, Grahtwood, Greenshade, Malabal Tor,
     Reaper's March, Bleakrock Isle, Bal Foyen, Stonefalls, Deshaan, Shadowfen,
@@ -44,7 +45,7 @@ class IncludedZones(OptionSet):
         "Bangkorai", "Alik'r Desert", "Khenarthi's Roost", "Auridon",
         "Grahtwood", "Greenshade", "Malabal Tor", "Reaper's March",
         "Bleakrock Isle", "Bal Foyen", "Stonefalls", "Deshaan",
-        "Shadowfen", "Eastmarch", "The Rift", "Craglorn", "Coldharbour"
+        "Shadowfen", "Eastmarch", "The Rift", "Craglorn"
     ])
 
 class GoalZone(Choice):
@@ -102,6 +103,11 @@ class ZoneQuestsEnabled(Toggle):
     display_name = "Enable Zone Quests"
     default = True
 
+class MainQuestsEnabled(Toggle):
+    """Enable or disable checks for completing main quests"""
+    display_name = "Enable Main Quests"
+    default = True
+
 class WayshrineChecksEnabled(Toggle):
     """Enable or disable checks for finding Wayshrine"""
     display_name = "Enable Wayshrine Checks"
@@ -119,6 +125,13 @@ class DelvesPerRegion(Range):
 #    display_name = "Enable Dungeon Checks"
 #    default = True
 
+class BaseGoldCap(Range):
+    """What you want your starting gold cap to be without any items, set to 0 to turn off gold limiting"""
+    display_name = "Gold Cap"
+    range_start = 0
+    range_end = 100000
+    default = 1000
+
 
 @dataclass
 class ESOOptions(PerGameCommonOptions):
@@ -127,7 +140,9 @@ class ESOOptions(PerGameCommonOptions):
     zone_count: ZoneCount
     included_zones: IncludedZones
     goal_zone: GoalZone
+    main_quests_enabled: MainQuestsEnabled
     zone_quests_enabled: ZoneQuestsEnabled
     wayshrine_checks_enabled: WayshrineChecksEnabled
     delves_per_region:DelvesPerRegion
+    gold_cap: BaseGoldCap
 #    dungeon_checks_enabled:DungeonChecksEnabled
