@@ -5,7 +5,8 @@ from CommonClient import CommonContext, ClientCommandProcessor, ClientStatus, ge
 from Utils import async_start
 from pathlib import Path
 import time
-from . import ESOWorld
+from . import ESOWorld, constants
+from .Data.ZoneQuestData import ZONE_QUEST_DATA
 
 logger = logging.getLogger("Client")
 
@@ -19,6 +20,7 @@ class ESOConfig:
     """Holds ESO file paths that can be updated at runtime."""
 
     def __init__(self):
+        self.checked_locations = set()
         if mods_folder_path.exists():
             self.base = mods_folder_path
         else:
@@ -137,6 +139,20 @@ class SavedVariablesReader:
             return None
 
         state = EsoState()
+
+        char_id_marker = '["char_id"]'
+        char_id_idx = text.find(char_id_marker)
+        if char_id_idx != -1:
+            # Find the value after the = sign
+            eq_idx = text.find("=", char_id_idx)
+            if eq_idx != -1:
+                line_end = text.find("\n", eq_idx)
+                value = text[eq_idx + 1:line_end].strip().strip(",").strip('"')
+                if locked_char_id is None:
+                    state.char_id = value
+                else:
+                    state.char_id = locked_char_id
+
 
         # Find the seed-specific block
         seed_marker = f'["{seed}"]'
@@ -276,7 +292,7 @@ class OptionsWriter:
         """Write options from slot_data to Options.lua"""
         self.current_seed = str(slot_data.get("seed", ""))
 
-        lines = ["APESO_ReceivedOptions = {"]
+        lines = ["APESO_options = {"]
 
         lines.append(f'    [\"seed\"] = "{self.current_seed}",')
 
@@ -311,7 +327,9 @@ class EsoFilePoller:
             try:
                 if eso_config.saved_variables.exists():
                     modified = eso_config.saved_variables.stat().st_mtime
+                    print(f"[ESO] mtime: {modified}, last: {self.last_modified}")
                     if modified != self.last_modified:
+                        print("[ESO] Change detected, calling on_change")
                         self.last_modified = modified
                         await self.on_change(modified)
                 await asyncio.sleep(1.5)
@@ -331,9 +349,10 @@ class EsoFilePoller:
             return
 
         # Pass the locked character ID so quests are read for the correct character
-        state = self.reader.parse(eso_config.saved_variables, self.ctx.current_char_id)
+        state = self.reader.parse(eso_config.saved_variables, str(self.ctx.slot_data.get("seed", "")))
         if state:
             await self.ctx.handle_eso_state(state)
+        print("end onchange")
 
 
 
@@ -450,7 +469,7 @@ class ESOContext(CommonContext):
             await self.handle_eso_state(state)
 
     async def handle_eso_state(self, state: EsoState):
-
+        print("ESO State fired")
         # character protection
         if self.current_char_id is None:
             # First character detected, lock to it
@@ -473,7 +492,7 @@ class ESOContext(CommonContext):
                 logger.info(f"[ESO] New character detected: {state.char_id}")
                 logger.info("[ESO] Type '/switch' to switch to this character, or switch back to your original character.")
             return  # Don't process locations while locked
-
+        print("past char check")
         # convert checks to AP IDs
         locations = set()
 
@@ -481,13 +500,43 @@ class ESOContext(CommonContext):
         locations.update(state.completed_delves)
         locations.update(state.completed_delves)
 
+        new = locations - self.checked_locations
+        self.checked_locations.update(new)
+        print("past new")
+
         if new:
             await self.send_msgs([{
                 "cmd": "LocationChecks",
                 "locations": list(new)
             }])
 
-        if self.slot_data.get("Goal") == 2:  # all_delves goal
+        print("past send")
+
+        if self.slot_data.get("Goal") == 0:  # main quest
+            final_id = constants.QUEST_OFFSET+4847
+            if final_id in state.checked_locations:
+                if not self.finished_game:
+                    await self.send_msgs([{
+                        "cmd": "StatusUpdate",
+                        "status": ClientStatus.CLIENT_GOAL
+                    }])
+                    self.finished_game = True
+
+        elif self.slot_data.get("Goal") == 1:  # zone quest
+            final_id = None
+            for questName, questData in ZONE_QUEST_DATA.items():
+                if questData.zone == self.slot_data.get("GoalZone") and questData.is_final:
+                    final_id = constants.QUEST_OFFSET+questData.quest_id
+                    break
+            if final_id in state.checked_locations:
+                if not self.finished_game:
+                    await self.send_msgs([{
+                        "cmd": "StatusUpdate",
+                        "status": ClientStatus.CLIENT_GOAL
+                    }])
+                    self.finished_game = True
+
+        elif self.slot_data.get("Goal") == 2:  # all_delves goal
             selected_delves = set(self.slot_data.get("SelectedDelves", []))
             if selected_delves and selected_delves.issubset(state.completed_delves):
                 if not self.finished_game:
@@ -496,6 +545,9 @@ class ESOContext(CommonContext):
                         "status": ClientStatus.CLIENT_GOAL
                     }])
                     self.finished_game = True
+        print("end eso State")
+
+
 
     def on_package(self, cmd: str, args: dict):
         """Handle incoming packets from the server."""
