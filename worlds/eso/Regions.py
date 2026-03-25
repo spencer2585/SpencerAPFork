@@ -1,7 +1,7 @@
 from BaseClasses import MultiWorld, Region, Entrance
 
-from .Data.ZoneData import ZONE_DATA
-from .Data.DelveData import DELVE_DATA
+from .data.ZoneData import ZONE_DATA
+from .data.DelveData import DELVE_DATA
 
 def create_regions(world):
     #create Menu

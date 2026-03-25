@@ -2,10 +2,10 @@ from BaseClasses import ItemClassification, Location
 
 from . import constants
 
-from .Data.DelveData import DELVE_DATA
-from .Data.WayshrineData import WAYSHRINE_DATA
-from .Data.MainQuestData import MAIN_QUEST_DATA
-from .Data.ZoneQuestData import ZONE_QUEST_DATA
+from .data.DelveData import DELVE_DATA
+from .data.WayshrineData import WAYSHRINE_DATA
+from .data.MainQuestData import MAIN_QUEST_DATA
+from .data.ZoneQuestData import ZONE_QUEST_DATA
 
 class ESOLocation(Location):
     game = "Elder Scrolls Online"

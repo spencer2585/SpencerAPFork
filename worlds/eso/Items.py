@@ -1,6 +1,6 @@
-from .Data.DelveData import DELVE_DATA
-from .Data.ZoneData import ZONE_DATA
-from .Data.FillerData import FILLER_DATA
+from .data.DelveData import DELVE_DATA
+from .data.ZoneData import ZONE_DATA
+from .data.FillerData import FILLER_DATA
 from BaseClasses import Item, ItemClassification
 from . import constants, regions
 
@@ -9,6 +9,9 @@ class ESOItem(Item):
 
 def get_item_name_to_id():
     item_table = {
+        "Wallet Capacity Upgrade": 149994,
+        "Skyshard": 149995,
+        "Progressive Main Quest": 149996,
         **{f"{zone_name} Access": constants.ZONE_ACCESS_OFFSET+ zone_data.zone_id for zone_name, zone_data in ZONE_DATA.items()},
         **{f"{delve_name} Access": constants.ZONE_ACCESS_OFFSET + delve_data.delve_id for delve_name, delve_data in DELVE_DATA.items()},
     }

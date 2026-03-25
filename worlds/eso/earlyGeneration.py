@@ -1,6 +1,6 @@
 from . import regions, eso_options
-from .Data.ZoneData import ZONE_DATA
-from .Data.DelveData import DELVE_DATA
+from .data.ZoneData import ZONE_DATA
+from .data.DelveData import DELVE_DATA
 
 MAIN_QUEST_ZONES = {
     0: ["Auridon", "Grahtwood"],

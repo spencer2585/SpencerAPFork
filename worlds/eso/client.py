@@ -6,7 +6,7 @@ from Utils import async_start
 from pathlib import Path
 import time
 from . import ESOWorld, constants
-from .Data.ZoneQuestData import ZONE_QUEST_DATA
+from .data.ZoneQuestData import ZONE_QUEST_DATA
 
 logger = logging.getLogger("Client")
 
@@ -211,7 +211,7 @@ class SavedVariablesReader:
                         try:
                             quest_id = int(line[lb + 1:rb])
                             # Convert to location ID: base 151000 + quest_id
-                            location_id = 151_000 + quest_id
+                            location_id = constants.QUEST_OFFSET + quest_id
                             state.completed_quests.add(location_id)
                         except ValueError:
                             pass
@@ -233,7 +233,7 @@ class SavedVariablesReader:
                         try:
                             delve_id = int(line[lb + 1:rb])
                             # Convert to location ID: base 11000 + delve_id
-                            location_id = 11_000 + delve_id
+                            location_id = constants.DELVE_LOCATION_OFFSET + delve_id
                             state.completed_delves.add(location_id)
                         except ValueError:
                             pass
@@ -498,7 +498,7 @@ class ESOContext(CommonContext):
 
         locations.update(state.node_info)
         locations.update(state.completed_delves)
-        locations.update(state.completed_delves)
+        locations.update(state.completed_quests)
 
         new = locations - self.checked_locations
         self.checked_locations.update(new)

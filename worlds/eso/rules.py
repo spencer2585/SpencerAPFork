@@ -1,7 +1,7 @@
-from .Data.ZoneData import ZONE_DATA
-from .Data.DelveData import DELVE_DATA
-from .Data.ZoneQuestData import ZONE_QUEST_DATA
-from .Data.MainQuestData import MAIN_QUEST_DATA
+from .data.ZoneData import ZONE_DATA
+from .data.DelveData import DELVE_DATA
+from .data.ZoneQuestData import ZONE_QUEST_DATA
+from .data.MainQuestData import MAIN_QUEST_DATA
 
 def create_rules(world):
     player = world.player

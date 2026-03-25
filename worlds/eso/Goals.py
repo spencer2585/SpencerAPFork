@@ -1,5 +1,5 @@
-from .Data.DelveData import DELVE_DATA
-from .Data.ZoneQuestData import ZONE_QUEST_DATA
+from .data.DelveData import DELVE_DATA
+from .data.ZoneQuestData import ZONE_QUEST_DATA
 
 
 def set_goal(world):
