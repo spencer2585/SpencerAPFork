@@ -49,6 +49,12 @@ def create_locations(world):
     #create Zone Quest Locations
     if world.options.zone_quests_enabled:
         for zone_quest_name, zone_quest_data in ZONE_QUEST_DATA.items():
+            if zone_quest_name == "Tip of the Spearhead" and "Betnikh" not in world.selected_zones:
+                continue
+
+            if zone_quest_name == "Escape from Bleakrock" and "Bal Foyen" not in world.selected_zones:
+                continue
+
             if zone_quest_data.zone in world.selected_zones:
                 if not zone_quest_data.required_delves or all(delve_name in world.selected_delves for delve_name in zone_quest_data.required_delves):
                     region = world.get_region(zone_quest_data.zone)
