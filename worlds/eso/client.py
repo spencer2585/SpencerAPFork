@@ -514,7 +514,7 @@ class ESOContext(CommonContext):
 
         if self.slot_data.get("Goal") == 0:  # main quest
             final_id = constants.QUEST_OFFSET+4847
-            if final_id in state.checked_locations:
+            if final_id in state.completed_quests:
                 if not self.finished_game:
                     await self.send_msgs([{
                         "cmd": "StatusUpdate",
@@ -528,7 +528,7 @@ class ESOContext(CommonContext):
                 if questData.zone == self.slot_data.get("GoalZone") and questData.is_final:
                     final_id = constants.QUEST_OFFSET+questData.quest_id
                     break
-            if final_id in state.checked_locations:
+            if final_id in state.completed_quests:
                 if not self.finished_game:
                     await self.send_msgs([{
                         "cmd": "StatusUpdate",
@@ -597,18 +597,6 @@ async def item_watcher(ctx: ESOContext):
                 ctx._last_item_count = len(ctx.items_received)
                 ctx.force_resync_on_connect = False
 
-                # Check for Victory item and send goal complete
-                for item in ctx.items_received:
-                    if item.item == VICTORY_ITEM_ID:
-                        if ctx.finished_game:
-                            continue
-                        await ctx.send_msgs([{
-                            "cmd": "StatusUpdate",
-                            "status": ClientStatus.CLIENT_GOAL
-                        }])
-                        ctx.finished_game = True
-                        print("[ESO] Victory! Goal complete sent to server.")
-                        break
     except Exception as e:
         print("[FATAL] Item watcher crashed:", e)
         raise
