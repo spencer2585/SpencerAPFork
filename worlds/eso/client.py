@@ -379,8 +379,8 @@ class ESOClientCommandProcessor(ClientCommandProcessor):
             self.output("[ESO] No new character detected yet.")
         return True
 
-    def _cmd_eso_goal(self) -> bool:
-        """Display your victory condition for this ESO seed.
+    def _cmd_eso_info(self) -> bool:
+        """Display your alliance and victory condition for this ESO seed.
         """
         ctx: ESOContext = self.ctx
 
