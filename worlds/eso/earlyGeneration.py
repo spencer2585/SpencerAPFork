@@ -125,6 +125,14 @@ def generate_early(world):
             random_candidates = [z for z in valid_zones if z != "Craglorn"]
         else:
             random_candidates = valid_zones
+        # remove starter zones from valid zone pool
+        random_candidates = [z for z in random_candidates if z not in ["Bleakrock Isle", "Stros M'kai", "Khenarthi's Roost"]]
+        # filter zones to those accessible with chosen zone count
+        random_candidates = [z for z in random_candidates if(p := find_path(starting_zone, z, valid_zones)) and len(p) <= num_zones]
+        if not random_candidates:
+            raise Exception(
+                "No valid zones to choose as goal zone, Increase your zone count"
+            )
         world.goal_zone = world.random.choice(random_candidates)
     else:
         world.goal_zone = eso_options.GOAL_ZONE_NAMES[goal_zone]
@@ -147,7 +155,7 @@ def generate_early(world):
             valid_zones.remove("Coldharbour")
             selected_zones_count += 1
 
-    if goal == 2:
+    if goal == 1:
         path = find_path(starting_zone, world.goal_zone, valid_zones)
         if path is None:
             raise Exception(

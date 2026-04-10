@@ -49,10 +49,10 @@ def create_locations(world):
     #create Zone Quest Locations
     if world.options.zone_quests_enabled:
         for zone_quest_name, zone_quest_data in ZONE_QUEST_DATA.items():
-            if zone_quest_name == "Tip of the Spearhead" and "Betnikh" not in world.selected_zones:
+            if zone_quest_name == "Tip of the Spearhead" and ("Betnikh" not in world.selected_zones or "Stros M'kai" not in world.selected_zones):
                 continue
 
-            if zone_quest_name == "Escape from Bleakrock" and "Bal Foyen" not in world.selected_zones:
+            if zone_quest_name == "Escape from Bleakrock" and ("Bal Foyen" not in world.selected_zones or "Bleakrock Isle" not in world.selected_zones):
                 continue
 
             if zone_quest_data.zone in world.selected_zones:

@@ -305,8 +305,13 @@ class OptionsWriter:
         lines.append(
             f"    [\"delves_per_region\"] = {slot_data.get('DelvesNum', 0)},")  # Note: uses 'DelvesNum' from your fill_slot_data
         lines.append(f"    [\"goldCap\"] = {slot_data.get('GoldCap', 0)},")
-
-        lines.append("}")
+        lines.append(f'    ["selected_zones"] = {{"' + '", "'.join(slot_data.get("SelectedZones", [])) + '"},')
+        delves = slot_data.get("SelectedDelves", [])
+        if delves:
+            lines.append(f'    ["selected_delves"] = {{"' + '", "'.join(delves) + '"},')
+        else:
+            lines.append(f'    ["selected_delves"] = {{}},')
+        lines.append(f'}}')
 
         try:
             eso_config.options_file.parent.mkdir(parents=True, exist_ok=True)

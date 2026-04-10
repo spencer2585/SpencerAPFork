@@ -28,13 +28,13 @@ def create_rules(world):
     #Zone Quest Rules
     if world.options.zone_quests_enabled:
         for quest_name, quest_data in ZONE_QUEST_DATA.items():
-            if quest_name == "Escape from Bleakrock" and "Bal Foyen" not in world.selected_zones:
+            if quest_name == "Escape from Bleakrock" and ("Bal Foyen" not in world.selected_zones or "Bleakrock Isle" in world.selected_zones):
                 continue
             elif quest_name == "Escape from Bleakrock":
                 location = world.multiworld.get_location(f"{quest_data.zone} - {quest_name} Zone Quest", player)
                 location.access_rule = lambda state, item = "Bal Foyen Access", p = player: state.has(item, p)
 
-            if quest_name == "Tip of the Spearhead" and "Betnikh" not in world.selected_zones:
+            if quest_name == "Tip of the Spearhead" and ("Betnikh" not in world.selected_zones or "Stros M'kai" in world.selected_zones):
                 continue
             elif quest_name == "Tip of the Spearhead":
                 location = world.multiworld.get_location(f"{quest_data.zone} - {quest_name} Zone Quest", player)
