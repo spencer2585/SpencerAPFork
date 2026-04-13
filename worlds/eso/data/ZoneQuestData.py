@@ -57,7 +57,7 @@ ZONE_QUEST_DATA: Dict[str, ZoneQuestData] = {
     "The Lightless Remnant": ZoneQuestData(zone="Rivenspire", quest_id=4884),
     "The Crown of Shornhelm": ZoneQuestData(zone="Rivenspire", quest_id=4936, is_final = True),
 
-    "A Dangerous Dream Zone": ZoneQuestData(zone="Stormhaven", quest_id=3412),
+    "A Dangerous Dream": ZoneQuestData(zone="Stormhaven", quest_id=3412),
     "False Accusations": ZoneQuestData(zone="Stormhaven", quest_id=2556),
     "Army at the Gates": ZoneQuestData(zone="Stormhaven", quest_id=2552),
     "Two Sides to Every Coin": ZoneQuestData(zone="Stormhaven", quest_id=2564),
