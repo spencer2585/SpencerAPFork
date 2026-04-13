@@ -55,7 +55,7 @@ ZONE_QUEST_DATA: Dict[str, ZoneQuestData] = {
     "The Liberation of Northpoint": ZoneQuestData(zone="Rivenspire", quest_id=4972),
     "Puzzle of the Pass": ZoneQuestData(zone="Rivenspire", quest_id=5024),
     "The Lightless Remnant": ZoneQuestData(zone="Rivenspire", quest_id=4884),
-    "The Crown of Shormhelm": ZoneQuestData(zone="Rivenspire", quest_id=4936, is_final = True),
+    "The Crown of Shornhelm": ZoneQuestData(zone="Rivenspire", quest_id=4936, is_final = True),
 
     "A Dangerous Dream Zone": ZoneQuestData(zone="Stormhaven", quest_id=3412),
     "False Accusations": ZoneQuestData(zone="Stormhaven", quest_id=2556),
