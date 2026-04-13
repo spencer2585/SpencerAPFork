@@ -41,7 +41,7 @@ def set_rules(world):
                 location.access_rule = lambda state: state.has("Grasslands Tournament Ticket", player) and skill_rule(state)
             elif "Glacier - Tournament Race" in loc_name:
                 location.access_rule = lambda state: state.has("Glacier Tournament Ticket", player) and skill_rule(state)
-            elif "city - Tournament Race" in loc_name:
+            elif "City - Tournament Race" in loc_name:
                 location.access_rule = lambda state: state.has("City Tournament Ticket", player) and skill_rule(state)
             elif loc_name == "Volcano - Fire Duck Race Won" in loc_name:
                 location.access_rule = lambda state: state.has("Red Key", player) and state.has("Orange Key", player) and state.has("Green Key", player) and skill_rule(state)
