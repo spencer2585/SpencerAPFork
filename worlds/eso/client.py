@@ -301,6 +301,7 @@ class OptionsWriter:
         lines.append(f"    [\"goal\"] = {slot_data.get('Goal', 0)},")
         lines.append(f'    [\"goal_zone\"] = "{slot_data.get("GoalZone", "")}",')
         lines.append(f"    [\"zone_quests_enabled\"] = {1 if slot_data.get('ZoneQuestsEnabled', True) else 0},")
+        lines.append(f"    [\"main_quests_enabled\"] = {1 if slot_data.get('MainQuestsEnabled', True) else 0},")
         lines.append(f"    [\"wayshrine_checks_enabled\"] = {1 if slot_data.get('WayshrineChecksEnabled', True) else 0},")
         lines.append(
             f"    [\"delves_per_region\"] = {slot_data.get('DelvesNum', 0)},")  # Note: uses 'DelvesNum' from your fill_slot_data
