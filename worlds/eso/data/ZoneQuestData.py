@@ -130,7 +130,7 @@ ZONE_QUEST_DATA: Dict[str, ZoneQuestData] = {
     "Restoring the Guardians": ZoneQuestData(zone="Stonefalls", quest_id=3734),
     "The Death of Balreth": ZoneQuestData(zone="Stonefalls", quest_id=3735),
     "The Coral Heart": ZoneQuestData(zone="Stonefalls", quest_id=3584),
-    "Breaking for Virak": ZoneQuestData(zone="Stonefalls", quest_id=3632),
+    "Breaking Fort Virak": ZoneQuestData(zone="Stonefalls", quest_id=3632),
     "Evening the Odds": ZoneQuestData(zone="Stonefalls", quest_id=3633),
     "The General's Demise": ZoneQuestData(zone="Stonefalls", quest_id=3634),
     "Aggressive Negotiations": ZoneQuestData(zone="Stonefalls", quest_id=3695),
@@ -277,4 +277,13 @@ ZONE_QUEST_DATA: Dict[str, ZoneQuestData] = {
     "The Harvest Heart": ZoneQuestData(zone="Coldharbour", quest_id=4715),
     "The Citadel Must Fall": ZoneQuestData(zone="Coldharbour", quest_id=4774),
     "The Final Assault": ZoneQuestData(zone="Coldharbour", quest_id=4758, is_final = True),
+
+    "The Star-Gazers": ZoneQuestData(zone="Craglorn", quest_id=5747),
+    "The Warrior's Call": ZoneQuestData(zone="Craglorn", quest_id=5748),
+    "Elemental Army": ZoneQuestData(zone="Craglorn", quest_id=5761),
+    "The Missing Guardian": ZoneQuestData(zone="Craglorn", quest_id=5760),
+    "Slithering Brood": ZoneQuestData(zone="Craglorn", quest_id=5768),
+    "The Serpent's Fang": ZoneQuestData(zone="Craglorn", quest_id=5769),
+    "Dawn of the Exalted Viper": ZoneQuestData(zone="Craglorn", quest_id=5771),
+    "The Time-Lost Warrior": ZoneQuestData(zone="Craglorn", quest_id=5776, is_final = True),
 }
