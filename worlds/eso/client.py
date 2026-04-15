@@ -417,10 +417,12 @@ class ESOClientCommandProcessor(ClientCommandProcessor):
             # Main Quest goal
             self.output("[ESO] Victory Condition: Complete the Main Quest")
             self.output("[ESO] Final Quest: 'God of Schemes' in Coldharbour")
-        else:
+        elif goal_type == 1:
             # Final Zone Quest goal
             if goal_zone:
                 self.output(f"[ESO] Victory Condition: Complete the final quest in {goal_zone}")
+        else:
+            self.output("[ESO] Victory Condition: Complete all included Delves.")
 
         self.output("=" * 50)
         return True
