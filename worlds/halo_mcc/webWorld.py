@@ -1,6 +1,7 @@
 from BaseClasses import Tutorial
+from worlds.AutoWorld import WebWorld
 
-class webWorld:
+class MCCWeb(WebWorld):
     theme = 'stone'
     tutorials = [Tutorial(
         "Multiworld Setup Guide",
