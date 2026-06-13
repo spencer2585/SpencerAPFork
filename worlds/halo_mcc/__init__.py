@@ -20,7 +20,7 @@ class MCCWorld(World):
     ##same thing as items but for locations
     location_name_to_id = locations.get_location_name_to_id()
 
-    #creates all logic for locations, entrances, and goal      
+    #creates all logic for locations, entrances, and goal
     def set_rules(self):
         rules.set_rules(self)
         goal.set_goal(self)
