@@ -3,8 +3,6 @@ from .webWorld import MCCWeb
 from .mcc_options import MCCOptions
 from . import regions, locations, items, rules, goal
 
-from . import locations
-
 
 class MCCWorld(World):
     """
@@ -22,7 +20,7 @@ class MCCWorld(World):
     ##same thing as items but for locations
     location_name_to_id = locations.get_location_name_to_id()
 
-    #creates all logic for locations, entrances, and goal
+    #creates all logic for locations, entrances, and goal      
     def set_rules(self):
         rules.set_rules(self)
         goal.set_goal(self)
@@ -37,9 +35,15 @@ class MCCWorld(World):
         items.create_items(self)
 
     #creates one item with needed information
-    def create_item(self, name: str):
-        items.create_item_with_data(self, name)
+    def create_item(self, name):
+        return items.create_item_with_data(self, name)
 
     #get the name of a filler item, used to fill unfilled locations
     def get_filler_item_name(self):
-        items.get_filler_item_name(self)
+        return items.get_filler_item_name(self)
+
+    #fill slot data from yaml options
+    def fill_slot_data(self) -> dict:
+        return {
+            "skullsanity": self.options.skullsanity.value,
+        }
