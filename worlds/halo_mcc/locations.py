@@ -1,6 +1,6 @@
 from BaseClasses import ItemClassification, Location
 
-from .data.halo_ce_location_data import CE_LOCATION_DATA
+from .data.halo_ce_location_data import CE_LOCATION_DATA, CE_SKULL_DATA
 from .data.levels import LEVEL_DATA
 
 #create our own location object that gets everything from the base location object and change game
@@ -10,8 +10,9 @@ class MCCLocation(Location):
 #map all locations to their id
 def get_location_name_to_id():
     location_map = {
-        **{f"{level} Complete ": data.offset for level, data in LEVEL_DATA.items()}
-#        **{f"{data.level} - {name}": data.id for name, data in CE_LOCATION_DATA.items()},
+        **{f"{level} Complete ": data.offset for level, data in LEVEL_DATA.items()},
+        **{name: data.id for name, data in CE_LOCATION_DATA.items()},
+        **{name: data.id for name, data in CE_SKULL_DATA.items()},
     }
     return location_map
 
@@ -26,3 +27,9 @@ def create_locations(world):
 #        region = world.getRegion(data.level)
 #        location = MCCLocation(world.player, f"{data.level} - {name}",data.id, region)
 #        region.append(location)
+
+    if world.options.skullsanity:
+        for name, data in CE_SKULL_DATA.items():
+            region = world.get_region(data.level)
+            location = MCCLocation(world.player, name, data.id, region)
+            region.locations.append(location)

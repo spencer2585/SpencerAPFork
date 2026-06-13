@@ -1,6 +1,6 @@
 .idea
 .vscode
-
+*__pycache__
 *_Spoiler.txt
 *.bmbp
 *.apbp
