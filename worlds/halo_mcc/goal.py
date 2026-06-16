@@ -1,5 +1,4 @@
-
+from rule_builder.rules import *
 
 def set_goal(world):
-    player= world.player
-    world.multiworld.completion_condition[player] = lambda state: state.can_reach("The Maw Complete","Location", player)
+    world.set_completion_rule(CanReachEntrance(f"Menu -> {world.final_mission}"))

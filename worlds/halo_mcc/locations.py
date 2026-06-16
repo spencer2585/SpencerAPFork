@@ -18,9 +18,10 @@ def get_location_name_to_id():
 #create locations and place them in their region
 def create_locations(world):
     for level, data in LEVEL_DATA.items():
-        region = world.get_region(level)
-        location = MCCLocation(world.player, f"{level} Complete", data.offset, region)
-        region.locations.append(location)
+        if level != world.final_mission:
+            region = world.get_region(level)
+            location = MCCLocation(world.player, f"{level} Complete", data.offset, region)
+            region.locations.append(location)
 
 #    for name, data in CE_LOCATION_DATA.items():
 #        region = world.getRegion(data.level)

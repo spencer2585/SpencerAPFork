@@ -1,7 +1,8 @@
 from worlds.AutoWorld import World
 from .webWorld import MCCWeb
 from .mcc_options import MCCOptions
-from . import regions, locations, items, rules, goal
+from . import regions, locations, items, rules, generate_early, goal
+from typing import Any
 
 from . import locations
 
@@ -21,6 +22,9 @@ class MCCWorld(World):
     item_name_to_id = items.get_item_name_to_id()
     ##same thing as items but for locations
     location_name_to_id = locations.get_location_name_to_id()
+    starting_mission:str
+    final_mission:str
+    missions:list[str]
 
     #creates all logic for locations, entrances, and goal
     def set_rules(self):
@@ -43,3 +47,11 @@ class MCCWorld(World):
     #get the name of a filler item, used to fill unfilled locations
     def get_filler_item_name(self):
         items.get_filler_item_name(self)
+
+    def generate_early(self):
+        generate_early.generate_early(self)
+
+    def fill_slot_data(self) -> dict[str, Any]:
+        return {
+            "final_mission": self.final_mission,
+        }

@@ -1,5 +1,6 @@
 from BaseClasses import Item, ItemClassification
-from .data.levels import LEVEL_DATA
+from .data.levels import LEVEL_DATA, LevelData
+
 
 #create our own item object that has the game set correctly, everything else is the same as the base item object
 class MCCItem(Item):
@@ -31,10 +32,13 @@ def create_filler(world, filled_locations):
 def create_items(world):
     itempool: list[Item] = []
     for level, data in LEVEL_DATA.items():
-        if level != "The Piller of Autumn":
-            itempool.append(create_item_with_data(world, f"{level} Access"))
-        else:
-            world.multiworld.push_precollected(create_item_with_data(world, f"{level} Access"))
+        if level != world.final_mission:
+            if level == world.starting_mission:
+                world.multiworld.push_precollected(create_item_with_data(world, f"{level} Access"))
+            else:
+                itempool.append(create_item_with_data(world, f"{level} Access"))
+
+
 
     itempool.extend(create_filler(world, len(itempool)))
 
