@@ -12,9 +12,14 @@ def generate_early(world):
         "The Maw",
     ]
 
-    world.final_mission = world.random.choice(missions)
+    if world.options.ce_final_mission == 11:
+        world.final_mission = world.random.choice(missions)
+    else:
+        index = world.options.ce_final_mission - 1
+        world.final_mission = missions[index]
     missions.remove(world.final_mission)
     world.starting_mission = world.random.choice(missions)
     world.missions = [m for m in missions]
+    print("final Mission: " + world.final_mission)
 
 
