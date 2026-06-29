@@ -12,7 +12,7 @@ def get_location_name_to_id():
     location_map = {
         **{f"{level} Complete ": data.offset for level, data in LEVEL_DATA.items()},
         **{f"{data.level} - {name}": data.id for name, data in CE_LOCATION_DATA.items() if data.type == "Chapter"},
-#        **{f"{data.level} - {name}": data.id for name, data in CE_LOCATION_DATA.items()},
+        **{f"{data.level} - {name}": data.id for name, data in CE_LOCATION_DATA.items() if data.type == "Skull"},
     }
     return location_map
 
@@ -35,4 +35,9 @@ def create_locations(world):
             if data.type == "Chapter":
                 region = world.get_region(data.level)
                 location = MCCLocation(world.player, f"{data.level} - {location}" ,data.id, region)
+                region.locations.append(location)
+
+            if (data.type == "Skull") & (world.options.skullsanity):
+                region = world.get_region(data.level)
+                location = MCCLocation(world.player, f"{data.level} - {location}", data.id, region)
                 region.locations.append(location)

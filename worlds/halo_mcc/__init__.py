@@ -4,9 +4,6 @@ from .mcc_options import MCCOptions
 from . import regions, locations, items, rules, generate_early, goal
 from typing import Any
 
-from . import locations
-
-
 class MCCWorld(World):
     """
     yipee
@@ -42,7 +39,7 @@ class MCCWorld(World):
 
     #creates one item with needed information
     def create_item(self, name: str):
-        items.create_item_with_data(self, name)
+        return items.create_item_with_data(self, name)
 
     #get the name of a filler item, used to fill unfilled locations
     def get_filler_item_name(self):
@@ -54,4 +51,5 @@ class MCCWorld(World):
     def fill_slot_data(self) -> dict[str, Any]:
         return {
             "final_mission": self.final_mission,
+            "skullsanity": self.options.skullsanity.value,
         }
