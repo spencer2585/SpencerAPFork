@@ -7,6 +7,7 @@ class LevelData:
     game:str
     offset:int
 
+#the base level offset is used for the level completion location and the location access item
 
 LEVEL_DATA: Dict[str, LevelData] = {
     "The Pillar of Autumn": LevelData(game = "CE", offset = constants.PILLER_OF_AUTUMN_OFFSET),

@@ -15,7 +15,7 @@ class MCCWorld(World):
     game = "Halo The Master Chief Collection"
     options_dataclass = MCCOptions
     options: MCCOptions
-    required_client_version = (0, 0, 1)
+    required_client_version = (1, 2, 0)
     web = MCCWeb()
 
     #connects item names to their ID

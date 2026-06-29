@@ -20,7 +20,7 @@ class CeFinalMission(Choice):
     """What the goal mission for halo CE is"""
     display_name = "Final CE Mission"
     default = 10
-    option_piller_of_autumn = 1
+    option_pillar_of_autumn = 1
     option_halo = 2
     option_truth_and_reconciliation = 3
     option_silent_cartographer = 4
