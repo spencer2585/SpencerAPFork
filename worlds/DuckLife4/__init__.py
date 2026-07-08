@@ -81,12 +81,14 @@ class dl4World(World):
             item_pool.append(self.create_item("Climbing Level"))
             item_pool.append(self.create_item("Jumping Level"))
 
+
+        self.victory_item = self.create_item("Victory")
+        #fix total items for victory item
+        total_locations = total_locations - 1
+
         # Add filler items
         while len(item_pool) < total_locations:
             item_pool.append(self.create_item(self.get_filler_item_name()))
-
-        # Inject starting region item based on alliance
-        self.victory_item = self.create_item("Victory")
 
         self.multiworld.itempool += item_pool
 
