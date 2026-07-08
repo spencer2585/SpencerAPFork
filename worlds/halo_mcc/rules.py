@@ -1,6 +1,6 @@
 from .data.levels import LEVEL_DATA
 from rule_builder.rules import *
-from .data.skulls import CE_HARD_REQUIRED, CE_HARDER_REQUIRED
+from .data.skulls import GAME_SKULLS
 from .mcc_options import SkullSanity
 
 missions = [
@@ -27,14 +27,13 @@ def set_rules(world):
             entrance = world.multiworld.get_entrance(f"Menu -> {level}", world.player)
             world.set_rule(entrance, HasAll(*[f"{m} Access" for m in world.missions]))
 
-    tier = world.options.skullsanity.value
-    if tier in (SkullSanity.option_hard, SkullSanity.option_harder):
-        skull_set = CE_HARD_REQUIRED if tier == SkullSanity.option_hard else CE_HARDER_REQUIRED
-        disablers = [f"{skull} Skull" for skull in skull_set]
-        for level in LEVEL_DATA:
+
+    if world.options.skullsanity.value == SkullSanity.option_all:
+        for level, data in LEVEL_DATA.items():
             if level == world.final_mission:
                 continue
-            location = world.multiworld.get_location(f"{level} Complete", world.player)
-            location.access_rule = lambda state, items=disablers, p=world.player: all(
-                state.has(item, p) for item in items
-            )
+
+            if data.game == "CE":
+                rule = HasFromListUnique(*world.ceskulls, count = world.options.skulls_required.value)
+                location = world.get_location(f"{level} Complete")
+                world.set_rule(location, rule)

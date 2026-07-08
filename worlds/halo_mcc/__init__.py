@@ -22,6 +22,7 @@ class MCCWorld(World):
     starting_mission:str
     final_mission:str
     missions:list[str]
+    ceskulls: list[str] = []
 
     #creates all logic for locations, entrances, and goal
     def set_rules(self):

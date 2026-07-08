@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from Options import PerGameCommonOptions, Toggle, Choice
+from Options import PerGameCommonOptions, Toggle, Choice, Range
+
 
 class SkullSanity(Choice):
     """
@@ -19,12 +20,23 @@ class SkullSanity(Choice):
     display_name = "Skull Sanity"
     option_off = 0
     option_non_scoring = 1
-    option_hard = 2
-    option_harder = 3
-    option_laso = 4
-    default = 0
+    option_all = 2
+    option_inverted = 3
+    default = 1
 
-#class Powerups(Toggle):
+
+class SkullsRequired(Range):
+    """
+    How many scoring skulls need to be disabled before mission completion is in logic
+    only affects all option for skullsanity
+    """
+    display_name = "Required Skull Disables"
+    range_start = 0
+    range_end = 14
+    default = 8
+
+
+# class Powerups(Toggle):
 #    """Should Powerups be locations"""
 #    display_name = "Enable Powerups"
 #    default = True
@@ -33,6 +45,7 @@ class CeEnabled(Toggle):
     """Should CeEnabled be locations"""
     display_name = "Enable Halo CE"
     default = True
+
 
 class CeFinalMission(Choice):
     """What the goal mission for halo CE is"""
@@ -50,9 +63,11 @@ class CeFinalMission(Choice):
     option_the_maw = 10
     option_random_choice = 11
 
+
 @dataclass
 class MCCOptions(PerGameCommonOptions):
     skullsanity: SkullSanity
-    #powerups: Powerups
+    skulls_required: SkullsRequired
+    # powerups: Powerups
     ce_enabled: CeEnabled
     ce_final_mission: CeFinalMission

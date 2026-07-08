@@ -37,7 +37,7 @@ def create_locations(world):
                 location = MCCLocation(world.player, f"{data.level} - {location}" ,data.id, region)
                 region.locations.append(location)
 
-            if (data.type == "Skull") & (world.options.skullsanity):
+            if data.type == "Skull":
                 region = world.get_region(data.level)
                 location = MCCLocation(world.player, f"{data.level} - {location}", data.id, region)
                 region.locations.append(location)

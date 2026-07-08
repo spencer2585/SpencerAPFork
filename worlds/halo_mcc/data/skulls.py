@@ -14,26 +14,17 @@ Multipliers:
 from __future__ import annotations
 
 _CE: list[str] = [
-    "Acrophobia",
     "Anger",
-    "Bandana",
     "Black Eye",
     "Blind",
-    "Boom",
     "Catch",
     "Eye Patch",
     "Famine",
     "Fog",
     "Foreign",
-    "Ghost",
-    "Grunt Birthday Party",
-    "Grunt Funeral",
     "Iron",
-    "Malfunction",
     "Mythic",
-    "Pinata",
     "Recession",
-    "Sputnik",
     "That's Just... Wrong",
     "Thunderstorm",
     "Tough Luck",
@@ -185,25 +176,36 @@ GAME_SKULLS: dict[str, list[str]] = {
     "reach": _REACH,
 }
 
-# Skulls logically required to complete any mission per CE skullsanity tier.
-# Hard requires more disablers in-hand before missions are considered beatable;
-# Harder requires fewer, making progression easier to unlock but gameplay harder.
-CE_HARD_REQUIRED: frozenset[str] = frozenset({
-    "Iron", "Black Eye", "Blind", "Eye Patch",
-    "Famine", "Foreign", "Mythic", "Thunderstorm", "Recession",
-})
-CE_HARDER_REQUIRED: frozenset[str] = frozenset({
-    "Iron", "Blind", "Famine", "Foreign", "Mythic",
-})
-
-# 0.00x multiplier - always forced off, never placed in item pool for now
-PERM_DISABLED: frozenset[str] = frozenset({
-    "Acrophobia",
+_CENS: list[str] = [
     "Bandana",
-    "Bonded Pair",
-    "Envy",
-    "Scarab",
-})
+    "Boom",
+    "Ghost",
+    "Grunt Birthday Party",
+    "Grunt Funeral",
+    "Malfunction",
+    "Pinata",
+    "Sputnik",
+    "Acrophobia"
+]
+
+_H2ANS: list[str] = []
+
+_H3NS: list[str] = []
+
+_ODSTNS: list[str] = []
+
+_H4NS: list[str] = []
+
+_REACHNS: list[str] = []
+
+NON_SCORING_SKULLS: dict[str, list[str]] = {
+    "ce": _CENS,
+    "h2a": _H2ANS,
+    "h3": _H3NS,
+    "odst": _ODSTNS,
+    "h4": _H4NS,
+    "reach": _REACHNS,
+}
 
 # 1.00x multiplier - placed in item pool but no score effect
 NON_SCORING: frozenset[str] = frozenset({
@@ -221,4 +223,9 @@ NON_SCORING: frozenset[str] = frozenset({
     "Sputnik",
     "Swarm",
     "They Come Back",
+    "Acrophobia",
+    "Bandana",
+    "Bonded Pair",
+    "Envy",
+    "Scarab",
 })
