@@ -8,14 +8,9 @@ class SkullSanity(Choice):
     on at game start; receiving a "Disable X" item lets you toggle that skull off.
 
     off:         No skull items or logic.
-    non_scoring: Only 1.00x (non-scoring) skulls included. No logic requirements.
-    hard:        All skulls. Logic requires Iron, Black Eye, Blind, Eye Patch,
-                 Famine, Foreign, Mythic, Thunderstorm, and Recession disablers
-                 before missions are logically beatable.
-    harder:      All skulls. Logic requires Iron, Blind, Famine, Foreign, and
-                 Mythic disablers before missions are logically beatable.
-    laso:        All skulls. No logic requirements; missions are considered
-                 beatable with all skulls active.
+    non_scoring: non scoring skulls are locked off, reciving the item for them lets you turn them on.
+    all: All skulls are locked, scoring skulls are locked on and non scoring skulls are locked off. reciving the item for them lets you toggle them.
+    inverted: all skulls are locked off, reciving the item for them lets you turn them on.
     """
     display_name = "Skull Sanity"
     option_off = 0
