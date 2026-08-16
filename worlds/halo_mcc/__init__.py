@@ -4,9 +4,6 @@ from .mcc_options import MCCOptions
 from . import regions, locations, items, rules, generate_early, goal
 from typing import Any
 
-from . import locations
-
-
 class MCCWorld(World):
     """
     yipee
@@ -15,7 +12,7 @@ class MCCWorld(World):
     game = "Halo The Master Chief Collection"
     options_dataclass = MCCOptions
     options: MCCOptions
-    required_client_version = (0, 0, 1)
+    required_client_version = (1, 2, 0)
     web = MCCWeb()
 
     #connects item names to their ID
@@ -25,6 +22,7 @@ class MCCWorld(World):
     starting_mission:str
     final_mission:str
     missions:list[str]
+    ceskulls: list[str] = []
 
     #creates all logic for locations, entrances, and goal
     def set_rules(self):
@@ -42,7 +40,7 @@ class MCCWorld(World):
 
     #creates one item with needed information
     def create_item(self, name: str):
-        items.create_item_with_data(self, name)
+        return items.create_item_with_data(self, name)
 
     #get the name of a filler item, used to fill unfilled locations
     def get_filler_item_name(self):
@@ -54,4 +52,5 @@ class MCCWorld(World):
     def fill_slot_data(self) -> dict[str, Any]:
         return {
             "final_mission": self.final_mission,
+            "skullsanity": self.options.skullsanity.value,
         }
