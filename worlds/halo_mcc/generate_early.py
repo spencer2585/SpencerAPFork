@@ -1,3 +1,5 @@
+from .data.skulls import *
+
 def generate_early(world):
     missions = [
         "The Pillar of Autumn",
@@ -21,5 +23,16 @@ def generate_early(world):
     world.starting_mission = world.random.choice(missions)
     world.missions = [m for m in missions]
     print("final Mission: " + world.final_mission)
+
+    if world.options.skullsanity.value >=2:
+        if world.options.ce_enabled.value == 1:
+            skull_list = []
+            for i in GAME_SKULLS["ce"]:
+                i = f"{i} Skull"
+                if i not in skull_list:
+                    skull_list.append(i)
+
+        world.ceskulls = [i for i in skull_list]
+
 
 
