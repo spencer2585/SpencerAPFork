@@ -1,7 +1,7 @@
 from BaseClasses import Item, ItemClassification
 from .data.constants import *
 from .data.levels import LEVEL_DATA, LevelData
-from .data.skulls import GAME_SKULLS, NON_SCORING, NON_SCORING_SKULLS
+from .data.skulls import GAME_SKULLS, NON_SCORING, NON_SCORING_SKULLS, SKULL_DATA
 from .mcc_options import SkullSanity
 
 # Ordered list of CE skull disabler items (non-PERM_DISABLED CE skulls, alphabetical)
@@ -18,7 +18,7 @@ def get_item_name_to_id():
     item_table = {
         "filler": 1,
         **{f"{level} Access": data.offset for level, data in LEVEL_DATA.items()},
-        **{f"{skull} Skull": data.id for Skull, data in SKULL_DATA.items()}
+        **{f"{skull} Skull": data.id for skull, data in SKULL_DATA.items()}
     }
     return item_table
 
