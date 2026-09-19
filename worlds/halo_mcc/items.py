@@ -18,7 +18,7 @@ def get_item_name_to_id():
     item_table = {
         "filler": 1,
         **{f"{level} Access": data.offset for level, data in LEVEL_DATA.items()},
-        **{f"{skull} Skull": SKULL_OFFSET + i + 1 for i, skull in enumerate(CE_SKULL_DISABLERS)}
+        **{f"{skull} Skull": data.id for Skull, data in SKULL_DATA.items()}
     }
     return item_table
 
