@@ -2,7 +2,7 @@ from BaseClasses import Item, ItemClassification
 from .data.constants import *
 from .data.levels import LEVEL_DATA, LevelData
 from .data.skulls import GAME_SKULLS, NON_SCORING, NON_SCORING_SKULLS, SKULL_DATA
-from .mcc_options import SkullSanity
+from .mcc_options import SkullSanity, CeEnabled
 
 # Ordered list of CE skull disabler items (non-PERM_DISABLED CE skulls, alphabetical)
 CE_SKULL_DISABLERS: list[str] = [*GAME_SKULLS["ce"], *NON_SCORING_SKULLS["ce"]]
@@ -41,6 +41,9 @@ def create_filler(world, filled_locations):
 
 # create all items for the world
 def create_items(world):
+    playerGames = []
+    if world.options.CeEnabled:
+        playerGames.append("CE")
     itempool: list[Item] = []
     for level, data in LEVEL_DATA.items():
         if level != world.final_mission:
@@ -49,15 +52,14 @@ def create_items(world):
             else:
                 itempool.append(create_item_with_data(world, f"{level} Access"))
 
-    # if option has all skulls on
-    if world.options.skullsanity >= 2:
-        for skull in GAME_SKULLS["ce"]:
-            itempool.append(create_item_with_data(world, f"{skull} Skull"))
-
-    # if option has only non-scoring skulls on
+    # if option has any skulls on
     if world.options.skullsanity >= 1:
-        for skull in NON_SCORING_SKULLS["ce"]:
-            itempool.append(create_item_with_data(world, f"{skull} Skull"))
+        for skull, data in SKULL_DATA.items():
+            if set(data.games) & set(playerGames):
+                if data.type == "Scoring" and world.options.SkullSanity >= 2:
+                    itempool.append(create_item_with_data(world, f"{skull} Skull"))
+                else:
+                    itempool.append(create_item_with_data(world, f"{skull} Skull"))
 
     itempool.extend(create_filler(world, len(itempool)))
 

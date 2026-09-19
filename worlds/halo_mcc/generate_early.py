@@ -1,4 +1,4 @@
-from .data.skulls import *
+from .data.skulls import SKULL_DATA
 
 def generate_early(world):
     missions = [
@@ -25,14 +25,14 @@ def generate_early(world):
     print("final Mission: " + world.final_mission)
 
     if world.options.skullsanity.value >=2:
+        ceskulllist = []
         if world.options.ce_enabled.value == 1:
-            skull_list = []
-            for i in GAME_SKULLS["ce"]:
-                i = f"{i} Skull"
-                if i not in skull_list:
-                    skull_list.append(i)
+            for skull, data in SKULL_DATA.items():
+                for game in data.games:
+                    if game == "CE" and world.options.CeEnabled:
+                        ceskulllist.append(skull)
 
-        world.ceskulls = [i for i in skull_list]
+        world.ceskulls = [i for i in ceskulllist]
 
 
 
