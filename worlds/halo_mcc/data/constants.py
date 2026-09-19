@@ -9,10 +9,10 @@
 #using this pattern we know this id is for the location of the 2nd chapter of the 11th mission of halo 3
 
 #for misc items they are placed below id 100000 which is where this pattern starts, for instance skulls, which are for
-#all games, are placed at 90000
+#all games, are placed at 10000
 
 #Misc offsets
-SKULL_OFFSET = 90000
+SKULL_OFFSET = 10000
 
 #ce game offset
 CE_OFFSET = 100000

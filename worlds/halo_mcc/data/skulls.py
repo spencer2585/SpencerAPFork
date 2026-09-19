@@ -12,6 +12,7 @@ Multipliers:
 """
 
 from __future__ import annotations
+from dataclasses import dataclass
 
 _CE: list[str] = [
     "Anger",
@@ -229,3 +230,38 @@ NON_SCORING: frozenset[str] = frozenset({
     "Envy",
     "Scarab",
 })
+
+@dataclass
+class SkullData:
+    id: int
+    type: str
+    games: list[str]
+
+SKULL_DATA: dict[str, SkullData] = {
+    "Acrophobia": SkullData(id = ,type = "Non Scoring", games = ["CE","Reach"]),
+    "Anger": SkullData(id = ,type = "Scoring", games = ["CE"]),
+    "Bandanna": SkullData(id = ,type = "Non Scoring", games = ["CE","Reach"]),
+    "Black Eye": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "Blind": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "Boom": SkullData(id = ,type = "Non Scoring", games = ["CE"]),
+    "Catch": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "Cowbell": SkullData(id = ,type = "Non Scoring", games = ["Reach"]),
+    "Eye Patch": SkullData(id = ,type = "Scoring", games = ["CE"]),
+    "Famine": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "Fog": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "Foreign": SkullData(id = ,type = "Scoring", games = ["CE"]),
+    "Ghost": SkullData(id = ,type = "Non Scoring", games = ["CE"]),
+    "Grunt Birthday Party": SkullData(id = ,type = "Non Scoring", games = ["CE","Reach"]),
+    "Grunt Funeral": SkullData(id = ,type = "Non Scoring", games = ["CE"]),
+    "Iron": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "IWHBYD": SkullData(id = ,type = "Scoring", games = ["Reach"]),
+    "Malfunction": SkullData(id = ,type = "Non Scoring", games = ["CE"]),
+    "Mythic": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "Pinata": SkullData(id = ,type = "Non Scoring", games = ["CE"]),
+    "Recession": SkullData(id = ,type = "Scoring", games = ["CE"]),
+    "Sputnik": SkullData(id = ,type = "Non Scoring", games = ["CE"]),
+    "That's Just... Wrong": SkullData(id = ,type = "Scoring", games = ["CE"]),
+    "Thunderstorm": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+    "Tilt": SkullData(id = ,type = "Scoring", games = ["Reach"]),
+    "Tough Luck": SkullData(id = ,type = "Scoring", games = ["CE","Reach"]),
+}
