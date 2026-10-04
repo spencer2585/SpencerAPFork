@@ -25,7 +25,7 @@ class MystItem(Item):
 
 class MystWorld(World):
     """
-    Myst (2021) is a puzzle adventure game where you explore mysterious Ages.
+    Myst is a puzzle adventure game where you explore mysterious Ages.
     """
     game = "Myst"
     web = MystWeb()
