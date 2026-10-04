@@ -30,7 +30,7 @@ def create_locations(world):
                 location = ESOLocation(world.player, f"{wayshrine_data.zone} - {wayshrine_name} Wayshrine", (constants.WAYSHRINE_OFFSET + wayshrine_data.node_id), region)
                 region.locations.append(location)
 
-    #Create Main Quest Locations
+    #Create Main Quest Location
     if world.options.main_quests_enabled:
         for mainquest_name, mainquest_data in MAIN_QUEST_DATA.items():
             if mainquest_data.quest_step <= world.max_main_quest:
