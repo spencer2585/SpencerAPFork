@@ -12,6 +12,7 @@ def get_item_name_to_id():
         "Wallet Capacity Upgrade": 149994,
         "Skyshard": 149995,
         "Progressive Main Quest": 149996,
+        "Infinite Wallet" : 149997,
         **{f"{zone_name} Access": constants.ZONE_ACCESS_OFFSET+ zone_data.zone_id for zone_name, zone_data in ZONE_DATA.items()},
         **{f"{delve_name} Access": constants.ZONE_ACCESS_OFFSET + delve_data.delve_id for delve_name, delve_data in DELVE_DATA.items()},
     }
@@ -53,6 +54,9 @@ def create_items(world):
         for _ in range(world.max_main_quest - 1):
             itempool.append(world.create_item("Progressive Main Quest"))
 
+    if world.options.infinite_wallet_enabled:
+        itempool.append(world.create_item("Infinite Wallet"))
+
     itempool.extend(create_filler(world, len(itempool)))
 
     world.multiworld.itempool += itempool
@@ -74,6 +78,9 @@ def create_item_with_data(world, name):
     elif name == "Progressive Main Quest":
         classification = ItemClassification.progression
         item_id = 149996
+    elif name == "Infinite Wallet":
+        classification = ItemClassification.useful
+        item_id = 149997
     #filler Items
     else:
         item_data = FILLER_DATA[name]
