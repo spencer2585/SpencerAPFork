@@ -312,6 +312,7 @@ class OptionsWriter:
             lines.append(f'    ["selected_delves"] = {{"' + '", "'.join(delves) + '"},')
         else:
             lines.append(f'    ["selected_delves"] = {{}},')
+        lines.append(f"    [\"wayshrine_locking\"] = {slot_data.get('WayshrineLocking', 0)},")
         lines.append(f'}}')
 
         try:

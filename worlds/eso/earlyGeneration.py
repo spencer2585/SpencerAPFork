@@ -110,6 +110,9 @@ def generate_early(world):
             "Craglorn cannot be set as goal zone with delves per zone set lower than 11"
         )
 
+    if (not world.options.wayshrine_checks_enabled) and world.options.wayshrine_locking > 0:
+        raise OptionError("Cannot have wayshrine locking enabled without wayshrine checks enabled")
+
     #remove coldharbour from valid zones if settings arnt right
     if not main_quests_enabled:
         valid_zones.remove("Coldharbour")

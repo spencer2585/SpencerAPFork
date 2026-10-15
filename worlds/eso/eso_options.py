@@ -120,6 +120,14 @@ class DelvesPerRegion(Range):
     range_end = 18
     default = 6
 
+class WayshrineLocking(Choice):
+    """Restricts the ability to fast travel to wayshrines behind an item, Requires wayshrine checks to be enabled"""
+    display_name = "Wayshrine Locking"
+    option_off = 0
+    option_zone = 1
+    option_individual = 2
+    default = 1
+
 #class DungeonChecksEnabled(Toggle):
 #    """Enable or disable checks for completing Dungeons"""
 #    display_name = "Enable Dungeon Checks"
@@ -149,6 +157,7 @@ class ESOOptions(PerGameCommonOptions):
     zone_quests_enabled: ZoneQuestsEnabled
     wayshrine_checks_enabled: WayshrineChecksEnabled
     delves_per_region:DelvesPerRegion
+    wayshrine_locking:WayshrineLocking
     gold_cap: BaseGoldCap
     infinite_wallet: InfiniteWallet
 #    dungeon_checks_enabled:DungeonChecksEnabled

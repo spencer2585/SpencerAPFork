@@ -91,4 +91,5 @@ class ESOWorld(World):
             "DelvesNum": self.options.delves_per_region.value,
             "GoldCap": self.options.gold_cap.value,
             "MaxMainQuests": self.max_main_quest,
+            "WayshrineLocking": self.options.wayshrine_locking.value,
         }
