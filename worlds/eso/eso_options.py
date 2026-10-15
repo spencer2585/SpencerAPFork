@@ -114,8 +114,8 @@ class WayshrineChecksEnabled(Toggle):
     default = True
 
 class DelvesPerRegion(Range):
-    """Maximum number of dungeons selected from each unlocked region"""
-    display_name = "dungeons_per_region"
+    """Maximum number of delves selected from each unlocked region"""
+    display_name = "Delves Per Region"
     range_start = 0
     range_end = 18
     default = 6
