@@ -132,6 +132,11 @@ class BaseGoldCap(Range):
     range_end = 100000
     default = 1000
 
+class InfiniteWallet(Toggle):
+    """Adds an infinite wallet item to the multiworld that holds unlimited money"""
+    display_name = "Infinite Wallet"
+    default =  True
+
 
 @dataclass
 class ESOOptions(PerGameCommonOptions):
@@ -145,4 +150,5 @@ class ESOOptions(PerGameCommonOptions):
     wayshrine_checks_enabled: WayshrineChecksEnabled
     delves_per_region:DelvesPerRegion
     gold_cap: BaseGoldCap
+    infinite_wallet: InfiniteWallet
 #    dungeon_checks_enabled:DungeonChecksEnabled

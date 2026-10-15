@@ -1,7 +1,9 @@
+from rule_builder.rules import *
 from .data.ZoneData import ZONE_DATA
 from .data.DelveData import DELVE_DATA
 from .data.ZoneQuestData import ZONE_QUEST_DATA
 from .data.MainQuestData import MAIN_QUEST_DATA
+from .eso_options import DelvesPerRegion
 
 def create_rules(world):
     player = world.player
@@ -14,7 +16,8 @@ def create_rules(world):
                     entrance_name = f"{zone_name} -> {connection}"
                     entrance = world.multiworld.get_entrance(entrance_name,player)
                     required_item = f"{connection} Access"
-                    entrance.access_rule = lambda state, item = required_item, p = player: state.has(item, p)
+                    world.set_rule(entrance, Has(required_item))
+                    #entrance.access_rule = lambda state, item = required_item, p = player: state.has(item, p)
 
     #Delve Entrance Rules
     if world.options.delves_per_region > 0:
@@ -23,7 +26,8 @@ def create_rules(world):
                 entrance_name = f"{delve_data.zone} -> {delve_name}"
                 entrance = world.multiworld.get_entrance(entrance_name,player)
                 required_item = f"{delve_name} Access"
-                entrance.access_rule = lambda state, item = required_item, p = player: state.has(item, p)
+                world.set_rule(entrance, Has(required_item))
+                #entrance.access_rule = lambda state, item = required_item, p = player: state.has(item, p)
 
     #Zone Quest Rules
     if world.options.zone_quests_enabled:
@@ -32,24 +36,32 @@ def create_rules(world):
                 continue
             elif quest_name == "Escape from Bleakrock":
                 location = world.multiworld.get_location(f"{quest_data.zone} - {quest_name} Zone Quest", player)
-                location.access_rule = lambda state, item = "Bal Foyen Access", p = player: state.has(item, p)
+                world.set_rule(location, Has("Bal Foyen Access"))
+                #location.access_rule = lambda state, item = "Bal Foyen Access", p = player: state.has(item, p)
+                continue
 
             if quest_name == "Tip of the Spearhead" and ("Betnikh" not in world.selected_zones or "Stros M'kai" in world.selected_zones):
                 continue
             elif quest_name == "Tip of the Spearhead":
                 location = world.multiworld.get_location(f"{quest_data.zone} - {quest_name} Zone Quest", player)
-                location.access_rule = lambda state, item="Betnikh Access", p=player: state.has(item, p)
+                world.set_rule(location, Has("Betnikh Access"))
+                #location.access_rule = lambda state, item="Betnikh Access", p=player: state.has(item, p)
+                continue
 
             if quest_data.zone in world.selected_zones:
                 if quest_data.required_delves and all(delve_name in world.selected_delves for delve_name in quest_data.required_delves):
                     location = world.multiworld.get_location(f"{quest_data.zone} - {quest_name} Zone Quest", player)
-                    location.access_rule = lambda state, q=quest_data: all(state.has(f"{delve} Access", world.player) for delve in q.required_delves)
+                    item_names = [f"{delve} Access" for delve in quest_data.required_delves]
+                    world.set_rule(location, HasAll(*item_names))
+                    #location.access_rule = lambda state, q=quest_data: all(state.has(f"{delve} Access", world.player) for delve in q.required_delves)
+                    continue
 
     if "Coldharbour" in world.selected_zones:
         entrance_name = "Main Quest -> Coldharbour"
         required_item = "Coldharbour Access"
         entrance = world.multiworld.get_entrance(entrance_name,player)
-        entrance.access_rule = lambda state, item = required_item, p = player: state.has(item, p)
+        world.set_rule(entrance, Has(required_item))
+        #entrance.access_rule = lambda state, item = required_item, p = player: state.has(item, p)
 
     #Main Quest Rules
     if world.options.main_quests_enabled:
@@ -58,13 +70,17 @@ def create_rules(world):
             if quest_data.quest_step <= world.max_main_quest:
                 location = world.multiworld.get_location(f"Main Quest - {quest_name}", world.player)
                 if quest_data.quest_step == 1:
-                    location.access_rule = lambda state, z1 = zone1: state.has(f"{z1} Access", player)
+                    world.set_rule(location, Has(f"{zone1} Access"))
+                    #location.access_rule = lambda state, z1 = zone1: state.has(f"{z1} Access", player)
                 elif quest_data.quest_step <= 4:
-                    location.access_rule = lambda state, q=quest_data, z1 = zone1: state.has(f"{z1} Access", world.player) and state.has("Progressive Main Quest", world.player, q.quest_step - 1)
+                    world.set_rule(location, Has(f"{zone1} Access") & Has("Progressive Main Quest", quest_data.quest_step - 1))
+                    #location.access_rule = lambda state, q=quest_data, z1 = zone1: state.has(f"{z1} Access", world.player) and state.has("Progressive Main Quest", world.player, q.quest_step - 1)
                 elif quest_data.quest_step <= 9:
-                    location.access_rule = lambda state, q=quest_data, z1 = zone1, z2 = zone2, d = delve: state.has(f"{z1} Access", world.player) and state.has("Progressive Main Quest", world.player, q.quest_step - 1) and state.has(f"{z2} Access", world.player) and ( state.has(f"{d} Access", player)if world.options.delves_per_region > 0 else True)
+                    world.set_rule(location, Has(f"{zone1} Access") & Has("Progressive Main Quest", quest_data.quest_step - 1) & Has(f"{zone2} Access") & (Has(f"{delve} Access") | OptionFilter(DelvesPerRegion, 0)))
+                    #location.access_rule = lambda state, q=quest_data, z1 = zone1, z2 = zone2, d = delve: state.has(f"{z1} Access", world.player) and state.has("Progressive Main Quest", world.player, q.quest_step - 1) and state.has(f"{z2} Access", world.player) and ( state.has(f"{d} Access", player)if world.options.delves_per_region > 0 else True)
                 elif quest_data.quest_step == 10:
-                    location.access_rule = lambda state, q=quest_data, z1 = zone1, z2 = zone2, d = delve: state.has(f"{z1} Access", world.player) and state.has("Progressive Main Quest", world.player, q.quest_step - 1) and state.has(f"{z2} Access", world.player) and state.has("Coldharbour Access", world.player) and (state.has(f"{d} Access", player) if world.options.delves_per_region > 0 else True)
+                    world.set_rule(location, Has(f"{zone1} Access") & Has("Progressive Main Quest", quest_data.quest_step - 1) & Has(f"{zone2} Access") & Has("Coldharbour Access") & (Has(f"{delve} Access") | OptionFilter(DelvesPerRegion, 0)))
+                    #location.access_rule = lambda state, q=quest_data, z1 = zone1, z2 = zone2, d = delve: state.has(f"{z1} Access", world.player) and state.has("Progressive Main Quest", world.player, q.quest_step - 1) and state.has(f"{z2} Access", world.player) and state.has("Coldharbour Access", world.player) and (state.has(f"{d} Access", player) if world.options.delves_per_region > 0 else True)
 
 
 
