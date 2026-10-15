@@ -54,7 +54,7 @@ def create_items(world):
         for _ in range(world.max_main_quest - 1):
             itempool.append(world.create_item("Progressive Main Quest"))
 
-    if world.options.infinite_wallet_enabled:
+    if world.options.infinite_wallet == True:
         itempool.append(world.create_item("Infinite Wallet"))
 
     itempool.extend(create_filler(world, len(itempool)))
