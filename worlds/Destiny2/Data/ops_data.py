@@ -11,7 +11,7 @@ class OpsTypes:
 class OpsData:
     destination: str
     type: str
-    hash: str
+    id: str
 
 OPS_DATA = dict[str, OpsData] = {
     "The Lightblade": OpsData(destination = Destinations.THRONEWORLD, type = OpsTypes.FIRETEAM,),
@@ -46,4 +46,29 @@ OPS_DATA = dict[str, OpsData] = {
     "The Inverted Spire": OpsData(destination = Destinations.NESSUS, type = OpsTypes.FIRETEAM,),
     "Liminality": OpsData(destination = Destinations.PALEHEART, type = OpsTypes.FIRETEAM,),
     "Proving Grounds": OpsData(destination = Destinations.NESSUS, type = OpsTypes.FIRETEAM,),
+    "The Coil": OpsData(destination = Destinations.DREAMINGCITY, type = OpsTypes.PINNACLE),
+    "Midtown": OpsData(destination = Destinations.EDZ, type = OpsTypes.PINNACLE),
+    "Heliostat": OpsData(destination = Destinations.COSMODROME, type = OpsTypes.PINNACLE),
+    "Derealize": OpsData(destination = Destinations.DREADNAUGHT, type = OpsTypes.PINNACLE),
+    "Kell's Fall": OpsData(destination = Destinations.TANGLEDSHORE, type = OpsTypes.PINNACLE),
+    "Encore": OpsData(destination = Destinations.NESSUS, type = OpsTypes.PINNACLE),
+    "Starcrossed": OpsData(destination = Destinations.MOON, type = OpsTypes.PINNACLE),
+    "//node.ovrd.AVALON//": OpsData(destination = Destinations.EDZ, type = OpsTypes.PINNACLE),
+    "Operation: Seraph's Shield": OpsData(destination = Destinations.COSMODROME, type = OpsTypes.PINNACLE),
+    "Vox Obscura": OpsData(destination = Destinations.MARS, type = OpsTypes.PINNACLE),
+    "Presage": OpsData(destination = Destinations.LASTCITY, type = OpsTypes.PINNACLE),
+    "Zero Hour": OpsData(destination = Destinations.LASTCITY, type = OpsTypes.PINNACLE),
+    "The Whisper": OpsData(destination = Destinations.IO, type = OpsTypes.PINNACLE),
+    "Contest of Elders": OpsData(destination = Destinations.TANGLEDSHORE, type = OpsTypes.PINNACLE),
+    "Katchcrash": OpsData(destination = Destinations.LASTCITY, type = OpsTypes.ARENA),
+    "Astral Alignment": OpsData(destination = Destinations.DREAMINGCITY, type = OpsTypes.ARENA),
+    "Nightmare Containment": OpsData(destination = Destinations.MOON, type = OpsTypes.ARENA),
+    "Override: The Moon": OpsData(destination = Destinations.MOON, type = OpsTypes.ARENA),
+    "Caldera": OpsData(destination = Destinations.KEPLER, type = OpsTypes.SOLO),
+    "Typhon Imperator": OpsData(destination = Destinations.NEPTUNE, type = OpsTypes.SOLO),
+    "The Salt Mines": OpsData(destination = Destinations.EDZ, type = OpsTypes.SOLO),
+    "The Conflux": OpsData(destination = Destinations.NESSUS, type = OpsTypes.SOLO),
+    "Creation": OpsData(destination = Destinations.EUROPA, type = OpsTypes.SOLO),
+    "K1 Logistics": OpsData(destination = Destinations.MOON, type = OpsTypes.SOLO),
+    "Skywatch": OpsData(destination = Destinations.COSMODROME, type = OpsTypes.SOLO),
 }

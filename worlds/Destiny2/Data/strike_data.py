@@ -4,7 +4,7 @@ from .constants import Destinations
 @dataclass
 class StrikeData:
     destination: str
-    hash: int
+    id: int
 
 STRIKE_DATA: dict[str, StrikeData] = {
     "Lake of Shadows": StrikeData(destination = Destinations.EDZ,),

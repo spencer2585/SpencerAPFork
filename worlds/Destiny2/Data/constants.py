@@ -17,3 +17,7 @@ class Destinations:
     LASTCITY = "Last City"
     THARSISOUTPOST = "Tharsis Outpost"
     ENCLAVE = "Enclave"
+    IO = "Io"
+    TANGLEDSHORE = "Tangled Shore"
+
+BASE_ID = 70000
