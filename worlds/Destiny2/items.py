@@ -35,7 +35,7 @@ class D2ItemData:
 items_dict = {
     **{name: D2ItemData(type = ItemTypes.WEAPONFRAME, id = ItemIds.WEAPONFRAMEID + data.id, classification= ItemClassification.progression) for name, data in WEAPON_FRAME_DATA.items()},
     **{name: D2ItemData(type = ItemTypes.EXOTIC, id = ItemIds.EXOTICID + data.id,classification= ItemClassification.useful) for name, data in EXOTIC_WEAPON_DATA.items()},
-    **{name: D2ItemData(type = ItemTypes.DESTINATION_ACCESS, id = ItemIds.DESTINATION_ACCESSID + data.id, classification= ItemClassification.progression) for name, data in DESTINATION_DATA.items()}
+    **{f"{name} Access": D2ItemData(type = ItemTypes.DESTINATION_ACCESS, id = ItemIds.DESTINATION_ACCESSID + data.id, classification= ItemClassification.progression) for name, data in DESTINATION_DATA.items() if data.social == True }
 }
 
 filler_dict = {
