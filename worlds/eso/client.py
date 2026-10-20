@@ -115,7 +115,7 @@ def check_eso_installation_get_errors():
 
 class EsoState:
     def __init__(self):
-        self.version = (0, 3, 0)
+        self.version = (0, 4, 0)
         self.char_id = None
         self.node_info = []
         self.completed_quests = set()
@@ -312,6 +312,7 @@ class OptionsWriter:
             lines.append(f'    ["selected_delves"] = {{"' + '", "'.join(delves) + '"},')
         else:
             lines.append(f'    ["selected_delves"] = {{}},')
+        lines.append(f"    [\"wayshrine_locking\"] = {slot_data.get('WayshrineLocking', 0)},")
         lines.append(f'}}')
 
         try:

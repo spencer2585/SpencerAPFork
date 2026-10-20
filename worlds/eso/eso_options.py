@@ -114,11 +114,19 @@ class WayshrineChecksEnabled(Toggle):
     default = True
 
 class DelvesPerRegion(Range):
-    """Maximum number of dungeons selected from each unlocked region"""
-    display_name = "dungeons_per_region"
+    """Maximum number of delves selected from each unlocked region"""
+    display_name = "Delves Per Region"
     range_start = 0
     range_end = 18
     default = 6
+
+class WayshrineLocking(Choice):
+    """Restricts the ability to fast travel to wayshrines behind an item, Requires wayshrine checks to be enabled"""
+    display_name = "Wayshrine Locking"
+    option_off = 0
+    option_zone = 1
+    option_individual = 2
+    default = 1
 
 #class DungeonChecksEnabled(Toggle):
 #    """Enable or disable checks for completing Dungeons"""
@@ -132,6 +140,11 @@ class BaseGoldCap(Range):
     range_end = 100000
     default = 1000
 
+class InfiniteWallet(Toggle):
+    """Adds an infinite wallet item to the multiworld that holds unlimited money"""
+    display_name = "Infinite Wallet"
+    default =  True
+
 
 @dataclass
 class ESOOptions(PerGameCommonOptions):
@@ -144,5 +157,7 @@ class ESOOptions(PerGameCommonOptions):
     zone_quests_enabled: ZoneQuestsEnabled
     wayshrine_checks_enabled: WayshrineChecksEnabled
     delves_per_region:DelvesPerRegion
+    wayshrine_locking:WayshrineLocking
     gold_cap: BaseGoldCap
+    infinite_wallet: InfiniteWallet
 #    dungeon_checks_enabled:DungeonChecksEnabled
