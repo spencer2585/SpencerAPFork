@@ -1,8 +1,9 @@
 from .data.DelveData import DELVE_DATA
 from .data.ZoneData import ZONE_DATA
 from .data.FillerData import FILLER_DATA
+from .data.WayshrineData import WAYSHRINE_DATA
 from BaseClasses import Item, ItemClassification
-from . import constants, regions
+from . import constants, Regions
 
 class ESOItem(Item):
     game = "Elder Scrolls Online"
@@ -15,6 +16,8 @@ def get_item_name_to_id():
         "Infinite Wallet" : 149997,
         **{f"{zone_name} Access": constants.ZONE_ACCESS_OFFSET+ zone_data.zone_id for zone_name, zone_data in ZONE_DATA.items()},
         **{f"{delve_name} Access": constants.ZONE_ACCESS_OFFSET + delve_data.delve_id for delve_name, delve_data in DELVE_DATA.items()},
+        **{f"{wayshrine} Wayshrine Unlocked": constants.WAYSHRINE_UNLOCK_OFFSET + wayshrine_data.node_id for wayshrine, wayshrine_data in WAYSHRINE_DATA.items()},
+        **{F"{zone_name} Wayshrines Unlocked": constants.WAYSHRINE_UNLOCK_ZONE_OFFSET + zone_data.zone_id for zone_name, zone_data in ZONE_DATA.items()},
     }
 
     return item_table
@@ -43,8 +46,10 @@ def create_filler(world, filled_locations):
 def create_items(world):
     itempool: list[Item] = []
     for zone_name, zone_data in ZONE_DATA.items():
-        if zone_name in world.selected_zones and zone_name != regions.get_starting_zone(world.options.alliance):
+        if zone_name in world.selected_zones and zone_name != Regions.get_starting_zone(world.options.alliance):
             itempool.append(world.create_item(f"{zone_name} Access"))
+            if world.options.wayshrine_locking == 1:
+                itempool.append(world.create_item(f"{zone_name} Wayshrines Unlocked"))
 
     for delve_name, delve_data in DELVE_DATA.items():
         if delve_name in world.selected_delves:
@@ -54,8 +59,14 @@ def create_items(world):
         for _ in range(world.max_main_quest - 1):
             itempool.append(world.create_item("Progressive Main Quest"))
 
-    if world.options.infinite_wallet_enabled:
+    if world.options.wayshrine_locking == 2:
+        for name, data in WAYSHRINE_DATA.items():
+            if data.zone in world.selected_zones:
+                itempool.append(world.create_item(f"{name} Wayshrine Unlocked"))
+
+    if world.options.infinite_wallet:
         itempool.append(world.create_item("Infinite Wallet"))
+
 
     itempool.extend(create_filler(world, len(itempool)))
 
@@ -73,6 +84,20 @@ def create_item_with_data(world, name):
         else:
             item_data = DELVE_DATA[real_name]
             item_id = constants.ZONE_ACCESS_OFFSET+ item_data.delve_id
+
+    elif "Wayshrines Unlocked" in name:
+        classification = ItemClassification.useful
+        real_name = name.replace(" Wayshrines Unlocked","")
+        if real_name in ZONE_DATA:
+            item_data = ZONE_DATA[real_name]
+            item_id = constants.WAYSHRINE_UNLOCK_ZONE_OFFSET + item_data.zone_id
+
+    elif "Wayshrine Unlocked" in name:
+        classification = ItemClassification.useful
+        real_name = name.replace(" Wayshrine Unlocked","")
+        if real_name in WAYSHRINE_DATA:
+            item_data = WAYSHRINE_DATA[real_name]
+            item_id = constants.WAYSHRINE_UNLOCK_OFFSET + item_data.node_id
 
     #Progressive Main Quest
     elif name == "Progressive Main Quest":

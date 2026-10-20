@@ -1,4 +1,5 @@
-from . import regions, eso_options
+from Options import OptionError
+from . import Regions, eso_options
 from .data.ZoneData import ZONE_DATA
 from .data.DelveData import DELVE_DATA
 
@@ -72,7 +73,7 @@ def generate_early(world):
     #get all needed information from the world for early generation
     player = world.player
     alliance = world.options.alliance
-    starting_zone = regions.get_starting_zone(alliance)
+    starting_zone = Regions.get_starting_zone(alliance)
     goal_zone = world.options.goal_zone
     num_zones = world.options.zone_count
     goal = world.options.goal
@@ -85,29 +86,32 @@ def generate_early(world):
 
     #Error if invalid settings
     if not main_quests_enabled and goal == 0:
-        raise Exception(
+        raise OptionError(
             "Cannot set goal to Main Quest completion and disable Main Quest locations at the same time"
         )
 
     if not zone_quests_enabled and goal == 1:
-        raise Exception(
+        raise OptionError(
             "Cannot set goal to Zone Quest Completion and disable Zone Quest locations at the same time"
         )
 
     if goal == 2 and delve_count == 0:
-        raise Exception(
+        raise OptionError(
             "Cannot set goal to Dungeon Delver and disable Delve locations at the same time"
         )
 
     if goal == 1 and goal_zone == 19 and not main_quests_enabled:
-        raise Exception(
+        raise OptionError(
             "Cannot set Coldharbour as goal zone and have main quests disabled at the same time"
         )
 
     if goal == 1 and goal_zone == 18 and delve_count != 0 and delve_count < 11 :
-        raise Exception(
+        raise OptionError(
             "Craglorn cannot be set as goal zone with delves per zone set lower than 11"
         )
+
+    if (not world.options.wayshrine_checks_enabled) and world.options.wayshrine_locking > 0:
+        raise OptionError("Cannot have wayshrine locking enabled without wayshrine checks enabled")
 
     #remove coldharbour from valid zones if settings arnt right
     if not main_quests_enabled:
@@ -213,9 +217,10 @@ def generate_early(world):
                 zone_delves.remove(chosen)
 
         world.selected_delves = selected_delves
-        get_max_main_quest(world, alliance)
 
-        world.multiworld.push_precollected(world.create_item(f"{starting_zone} Access"))
+    get_max_main_quest(world, alliance)
+
+    world.multiworld.push_precollected(world.create_item(f"{starting_zone} Access"))
 
 
 

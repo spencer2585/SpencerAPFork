@@ -7,7 +7,7 @@ from worlds.AutoWorld import WebWorld, World
 from .eso_options import (
     ESOOptions, Alliance, GOAL_ZONE_NAMES, Goal
 )
-from . import regions, locations, items, rules, earlyGeneration, goals
+from . import Regions, Locations, Items, rules, earlyGeneration, Goals
 
 
 def run_client(*args):
@@ -44,13 +44,13 @@ class ESOWorld(World):
     game = "Elder Scrolls Online"
     options_dataclass = ESOOptions
     options: ESOOptions
-    required_client_version = (0, 3, 0)
+    required_client_version = (0, 4, 0)
     web = ESOWeb()
     settings: ClassVar[EsoSettings]
 
 
-    item_name_to_id = items.get_item_name_to_id()
-    location_name_to_id = locations.get_location_name_to_id()
+    item_name_to_id = Items.get_item_name_to_id()
+    location_name_to_id = Locations.get_location_name_to_id()
 
     selected_zones: Set[str]
     goal_zone: Optional[str]
@@ -62,20 +62,20 @@ class ESOWorld(World):
 
     def set_rules(self):
         rules.create_rules(self)
-        goals.set_goal(self)
+        Goals.set_goal(self)
 
     def create_regions(self):
-        regions.create_regions(self)
-        locations.create_locations(self)
+        Regions.create_regions(self)
+        Locations.create_locations(self)
 
     def create_items(self):
-        items.create_items(self)
+        Items.create_items(self)
 
     def create_item(self, name: str):
-        return items.create_item_with_data(self, name)
+        return Items.create_item_with_data(self, name)
 
     def get_filler_item_name(self):
-        return items.get_filler_item_name(self)
+        return Items.get_filler_item_name(self)
 
     def fill_slot_data(self):
         return{
@@ -91,4 +91,5 @@ class ESOWorld(World):
             "DelvesNum": self.options.delves_per_region.value,
             "GoldCap": self.options.gold_cap.value,
             "MaxMainQuests": self.max_main_quest,
+            "WayshrineLocking": self.options.wayshrine_locking.value,
         }
