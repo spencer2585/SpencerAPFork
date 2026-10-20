@@ -115,7 +115,7 @@ def check_eso_installation_get_errors():
 
 class EsoState:
     def __init__(self):
-        self.version = (0, 3, 0)
+        self.version = (0, 4, 0)
         self.char_id = None
         self.node_info = []
         self.completed_quests = set()

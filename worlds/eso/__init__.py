@@ -44,7 +44,7 @@ class ESOWorld(World):
     game = "Elder Scrolls Online"
     options_dataclass = ESOOptions
     options: ESOOptions
-    required_client_version = (0, 3, 0)
+    required_client_version = (0, 4, 0)
     web = ESOWeb()
     settings: ClassVar[EsoSettings]
 
