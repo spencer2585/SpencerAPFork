@@ -1,4 +1,5 @@
 from worlds.AutoWorld import World
+from worlds.LauncherComponents import Type, Component, components, launch_subprocess
 from .webWorld import MCCWeb
 from .mcc_options import MCCOptions
 from . import regions, locations, items, rules, generate_early, goal
@@ -8,6 +9,14 @@ class MCCWorld(World):
     """
     yipee
     """
+
+    def run_client(*args):
+        from .client import launch
+        launch_subprocess(launch, name="HaloMCCClient", args=args)
+
+    components.append(
+        Component("Halo: The Master Chief Collection Client", func=run_client, component_type=Type.CLIENT)
+    )
 
     game = "Halo The Master Chief Collection"
     options_dataclass = MCCOptions

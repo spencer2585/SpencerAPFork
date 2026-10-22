@@ -1,11 +1,11 @@
 #ID pattern works like this
-#example id 311012
+#example id 31101002
 #The First number (here it is 3) is the game
 #so 1 = ce, 2 = halo 2, 3 = halo 3, 4 = halo 4, 5 = ODST, 6 = Reach
 #next 2 numbers (here 11) is the mission number
 #here it would be mission 11, with the first number (3) we know the item has to do with mission 11 of halo 3
 # the next 2 numbers (here 01) is the item/location type, here 01 means a chapter location, 00 would be level completion
-#the last number (2) is to do with the item/location type. here it would mean the second chapter
+#the last 3 numbers (002) is to do with the item/location type. here it would mean the second chapter
 #using this pattern we know this id is for the location of the 2nd chapter of the 11th mission of halo 3
 
 #for misc items they are placed below id 100000 which is where this pattern starts, for instance skulls, which are for

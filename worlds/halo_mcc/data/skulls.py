@@ -13,7 +13,7 @@ Multipliers:
 
 from __future__ import annotations
 from dataclasses import dataclass
-from constants import SKULL_OFFSET
+from .constants import SKULL_OFFSET
 
 _CE: list[str] = [
     "Anger",
