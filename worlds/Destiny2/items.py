@@ -33,7 +33,7 @@ class D2ItemData:
 
 
 items_dict = {
-    **{name: D2ItemData(type = ItemTypes.WEAPONFRAME, id = ItemIds.WEAPONFRAMEID + data.id, classification= ItemClassification.progression) for name, data in WEAPON_FRAME_DATA.items()},
+    **{f"{name} Frame": D2ItemData(type = ItemTypes.WEAPONFRAME, id = ItemIds.WEAPONFRAMEID + data.id, classification= ItemClassification.progression) for name, data in WEAPON_FRAME_DATA.items()},
     **{name: D2ItemData(type = ItemTypes.EXOTIC, id = ItemIds.EXOTICID + data.id,classification= ItemClassification.useful) for name, data in EXOTIC_WEAPON_DATA.items()},
     **{f"{name} Access": D2ItemData(type = ItemTypes.DESTINATION_ACCESS, id = ItemIds.DESTINATION_ACCESSID + data.id, classification= ItemClassification.progression) for name, data in DESTINATION_DATA.items() if data.social == False }
 }
@@ -51,6 +51,9 @@ def get_item_name_to_id():
 def create_items(world):
     itempool: list[Item] = []
     for name, data in items_dict.items():
+        if data.type == ItemTypes.WEAPONFRAME:
+            if name in world.startingFrames:
+                continue
         itempool.append(D2Item(name, data.classification, data.id, world.player))
 
     itempool.extend(create_filler(world, len(itempool)))

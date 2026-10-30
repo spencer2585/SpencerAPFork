@@ -2,7 +2,7 @@ from BaseClasses import Tutorial
 from worlds.AutoWorld import WebWorld, World
 from typing import ClassVar
 from .d2_options import D2Options
-from . import rules, items, locations, regions
+from . import rules, items, locations, regions, generate_early
 
 class D2Web(WebWorld):
     theme = 'stone'
@@ -29,6 +29,10 @@ class D2World(World):
 
     item_name_to_id = items.get_item_name_to_id()
     location_name_to_id = locations.get_location_name_to_id()
+    startingFrames: list[str]
+
+    def generate_early(self):
+        generate_early.generate_early(self)
 
     def set_rules(self):
         rules.set_rules(self)
@@ -39,3 +43,8 @@ class D2World(World):
 
     def create_items(self):
         items.create_items(self)
+
+    def fill_slot_data(self):
+        return{
+            "pinnacleOps": self.options.pinnacle_ops,
+        }
