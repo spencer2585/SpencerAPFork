@@ -4,6 +4,7 @@ Myst APWorld - Minimal test version for connection testing
 from typing import Dict, Any
 from BaseClasses import Region, Entrance, Item, ItemClassification, Tutorial
 from worlds.AutoWorld import World, WebWorld
+from worlds.LauncherComponents import Type, Component, components, launch_subprocess
 
 
 class MystWeb(WebWorld):
@@ -27,6 +28,15 @@ class MystWorld(World):
     """
     Myst is a puzzle adventure game where you explore mysterious Ages.
     """
+
+    def run_client(*args):
+        from .client import launch
+        launch_subprocess(launch, name="MystClient", args=args)
+
+    components.append(
+        Component("Myst Client", func=run_client, component_type=Type.CLIENT)
+    )
+
     game = "Myst"
     web = MystWeb()
 
